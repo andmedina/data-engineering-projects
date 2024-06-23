@@ -8,3 +8,4 @@
 
 # ETL 
 - Extract data from csv, xml, and json files. Transform data into international units. Load data into csv, ready for DB upload. [etl_project_1](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_1.ipynb)
+- Extract data from csv, xml, and json files. Transform price data to 2 deimcal places. Load data into csv. [etl_project_2](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_2.ipynb)
