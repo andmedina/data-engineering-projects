@@ -7,4 +7,4 @@
 - Another sample of working wtih beautifulsoup to work with table data [beautifulSoup.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/beautifulSoup.ipynb)
 
 # ETL 
-- Extract data from csv, xml, and json files. Transform data into international units. Load data into csv, ready for DB upload. [etl_project_1]()
+- Extract data from csv, xml, and json files. Transform data into international units. Load data into csv, ready for DB upload. [etl_project_1](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_1.ipynb)
