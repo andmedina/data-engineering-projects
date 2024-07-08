@@ -12,3 +12,4 @@
 - Extract data from csv, xml, and json files. Transform price data to 2 deimcal places. Load data into csv. [etl_project_2](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_2.ipynb)
 - Load local csv file data into a sqlite3 database. [connect_to_db](https://github.com/andmedina/data-engineering-projects/blob/main/connect_to_db.ipynb)
 - Automate extraction, transformation, and loading of GDP data from IMF's biannual evaluations into CSV and database formats. Includes logging progress with timestamps for updates. [jupyter format](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.ipynb) & [python format](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.py)
+- Convert a table into second normal form (2NF) using sqlite3 and pandas. [sqlite3_project_1.ipynb]
