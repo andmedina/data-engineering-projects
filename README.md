@@ -13,3 +13,4 @@
 - Load local csv file data into a sqlite3 database. [connect_to_db](https://github.com/andmedina/data-engineering-projects/blob/main/connect_to_db.ipynb)
 - Automate extraction, transformation, and loading of GDP data from IMF's biannual evaluations into CSV and database formats. Includes logging progress with timestamps for updates. [jupyter format](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.ipynb) & [python format](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.py)
 - Convert a table into second normal form (2NF) using sqlite3 and pandas. [sqlite3_project_1.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/sqlite3_project_1.ipynb)
+- Showcase the power of shell scripting for ETL operations and using sqlite3. [shell_etl_project_1.ipynb]()
