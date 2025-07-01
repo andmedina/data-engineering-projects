@@ -1,16 +1,37 @@
+# Data Engineering Projects
 
-# Web Scraping
-- An easy way to scrape information using Python Request library [ibm_webscraping.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/ibm_webscraping.ipynb)
-- Set up for webscraping with the request lib and beatifulsoup to navigate the html request. [wiki.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/wiki.ipynb)
-- Basic use of 3 rest apis: RandomUser, Fruityvice, and open-joke-api [randomusrapi_fruitapi.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/REST_API/randomusrapi_fruitapi.ipynb)
-- Use of beautifulsoup library to scrape data from a bank table [bank.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/banks.ipynb)
-- Another sample of working wtih beautifulsoup to work with table data [beautifulSoup.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/beautifulSoup.ipynb)
-- Scrape data from a wikitable using requests and BeautifulSoup. Load to sqlite database. [webscrape_project_1](https://github.com/andmedina/data-engineering-projects/blob/main/webscrape_project_1.ipynb)
+This repository showcases hands-on data engineering work, including web scraping, ETL processes, data normalization, automation, and scripting — using Python, SQL, APIs, and shell tools.
 
-# ETL 
-- Extract data from csv, xml, and json files. Transform data into international units. Load data into csv, ready for DB upload. [etl_project_1](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_1.ipynb)
-- Extract data from csv, xml, and json files. Transform price data to 2 deimcal places. Load data into csv. [etl_project_2](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_2.ipynb)
-- Load local csv file data into a sqlite3 database. [connect_to_db](https://github.com/andmedina/data-engineering-projects/blob/main/connect_to_db.ipynb)
-- Automate extraction, transformation, and loading of GDP data from IMF's biannual evaluations into CSV and database formats. Includes logging progress with timestamps for updates. [jupyter format](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.ipynb) & [python format](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.py)
-- Convert a table into second normal form (2NF) using sqlite3 and pandas. [sqlite3_project_1.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/sqlite3_project_1.ipynb)
-- Showcase the power of shell scripting for ETL operations and using sqlite3. [shell_etl_project_1.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/shell_etl_project_1.ipynb)
+---
+
+## 🔍 Web Scraping
+
+- Scrape data using the Python `requests` library  
+  [ibm_webscraping.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/ibm_webscraping.ipynb)
+- Use `requests` and `BeautifulSoup` to navigate HTML  
+  [wiki.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/wiki.ipynb)
+- Interact with 3 REST APIs: RandomUser, Fruityvice, Open Joke API  
+  [randomusrapi_fruitapi.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/REST_API/randomusrapi_fruitapi.ipynb)
+- Scrape bank table data using `BeautifulSoup`  
+  [bank.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/banks.ipynb)
+- Parse table data from HTML with `BeautifulSoup`  
+  [beautifulSoup.ipynb](https://github.com/andmedina/webscraping_projects/blob/main/beautifulSoup.ipynb)
+- Scrape a wikitable, transform and load into SQLite database  
+  [webscrape_project_1.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/webscrape_project_1.ipynb)
+
+---
+
+## 🔁 ETL Projects
+
+- Extract from CSV/XML/JSON → transform to international units → load to CSV  
+  [etl_project_1.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_1.ipynb)
+- Extract/transform price data to 2 decimals → load to CSV  
+  [etl_project_2.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/etl_project_2.ipynb)
+- Load local CSV data into SQLite3  
+  [connect_to_db.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/connect_to_db.ipynb)
+- Automate GDP data ETL from IMF, with logging  
+  [Jupyter Notebook](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.ipynb) • [Python Script](https://github.com/andmedina/data-engineering-projects/blob/main/gdp_country/countries_by_gdp.py)
+- Normalize a dataset to 2NF using Pandas + SQLite3  
+  [sqlite3_project_1.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/sqlite3_project_1.ipynb)
+- Perform ETL using shell scripting and SQLite3  
+  [shell_etl_project_1.ipynb](https://github.com/andmedina/data-engineering-projects/blob/main/shell_etl_project_1.ipynb)
