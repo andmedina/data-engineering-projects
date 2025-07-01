@@ -2,6 +2,10 @@
 
 This repository showcases hands-on data engineering work, including web scraping, ETL processes, data normalization, automation, and scripting — using Python, SQL, APIs, and shell tools.
 
+## Table of Contents
+- [Web Scraping](#web-scraping)
+- [ETL Projects](#etl-projects)
+
 ---
 
 ## 🔍 Web Scraping
