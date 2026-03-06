@@ -15,7 +15,7 @@ GENE_LIST = [
     "APOE",
 ]
 
-DATABASE_NAME = "gene_metadata.db"
+DATABASE_NAME = "data/gene_metadata.db"
 TABLE_NAME = "genes"
 
 RAW_JSON_PATH = "data/raw/gene_metadata_raw.json"

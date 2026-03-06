@@ -1,0 +1,1 @@
+SELECT * FROM genes LIMIT 10;
