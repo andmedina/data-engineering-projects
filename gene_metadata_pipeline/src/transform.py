@@ -4,22 +4,16 @@ Transform raw Ensembl gene metadata into a clean dataframe.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
+
+from .config import PROCESSED_CSV_PATH
 
 
 def transform_gene_data(raw_data: list[dict]) -> pd.DataFrame:
     """
     Convert raw Ensembl API responses into a structured dataframe.
-
-    Parameters
-    ----------
-    raw_data : list[dict]
-        Raw JSON responses from the Ensembl API.
-
-    Returns
-    -------
-    pd.DataFrame
-        Clean dataframe containing gene metadata.
     """
     records = []
 
@@ -38,5 +32,16 @@ def transform_gene_data(raw_data: list[dict]) -> pd.DataFrame:
         )
 
     dataframe = pd.DataFrame(records)
-
     return dataframe
+
+
+def save_processed_data(
+    dataframe: pd.DataFrame,
+    output_path: str = PROCESSED_CSV_PATH,
+) -> None:
+    """
+    Save transformed data to CSV.
+    """
+    output_file = Path(output_path)
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    dataframe.to_csv(output_file, index=False)
