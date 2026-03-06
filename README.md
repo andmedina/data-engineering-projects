@@ -12,10 +12,10 @@ Projects combine multiple data engineering skills into practical pipelines.
 
 | Project | Description |
 |----|----|
-| `gene_metadata_pipeline` | **Bioinformatics ETL pipeline** that extracts human gene metadata from the Ensembl REST API, transforms JSON responses into structured tabular data, and loads results into SQLite |
-| `gdp_country_pipeline` | ETL pipeline that extracts GDP data, transforms values, and loads results into SQLite |
-| `shell_etl_passwd_to_sqlite` | Demonstrates ETL using shell tools (`cut`, `tr`, `sed`) and loads results into SQLite |
-| `top_movies_webscrape_etl` | Web scraping pipeline that extracts movie rankings, transforms data, and stores results in SQLite |
+| [gene_metadata_pipeline](./projects/gene_metadata_pipeline/) | Bioinformatics ETL pipeline extracting gene metadata from Ensembl API and loading into SQLite |
+| [gdp_country_pipeline](./projects/gdp_country_pipeline/) | ETL pipeline extracting GDP data and storing results in SQLite |
+| [shell_etl_psswd_to_sqlite](./projects/shell_etl_psswd_to_sqlite/) | Shell-based ETL pipeline using `cut`, `tr`, and `sed` |
+| [top_movies_webscrape_etl](./projects/top_movies_webscrape_etl/) | Web scraping pipeline storing movie rankings in SQLite |
 
 ---
 
