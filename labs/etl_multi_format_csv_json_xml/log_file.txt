@@ -1,0 +1,7 @@
+2026-02-25-21:34:41,ETL Job Started
+2026-02-25-21:34:41,Download phase Started
+2026-02-25-21:34:42,Download phase Ended
+2026-02-25-21:34:42,Extract phase Started
+2026-02-25-21:34:42,Extract phase Ended
+2026-02-25-21:34:42,Transform phase Started
+2026-02-25-21:34:42,ETL Job Failed: loop of ufunc does not support argument 0 of type float which has no callable rint method

@@ -8,8 +8,8 @@
 *.db
 
 # Logs
+logs/
 *_log.txt
-*.txt
 
 # Archives
 *.zip
