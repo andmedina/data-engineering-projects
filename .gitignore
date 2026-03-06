@@ -14,6 +14,11 @@ logs/
 # Archives
 *.zip
 
+# Gene metadata pipeline outputs
+projects/gene_metadata_pipeline/data/
+projects/gene_metadata_pipeline/logs/
+projects/gene_metadata_pipeline/*.db
+
 # Python cache
 __pycache__/
 *.pyc
