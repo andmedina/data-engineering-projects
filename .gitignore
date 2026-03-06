@@ -3,7 +3,6 @@
 
 # Allow required input datasets
 !labs/database_connection_basics/INSTRUCTOR.csv
-!labs/etl_multi_format_csv_json_xml/extracted_files/*.csv
 
 # Generated databases
 *.db
