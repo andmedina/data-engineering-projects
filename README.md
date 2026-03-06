@@ -1,29 +1,70 @@
-# Data Engineering Projects
+# Data Engineering Portfolio
 
-This repository showcases hands-on data engineering work, including web scraping, ETL processes, data normalization, automation, and scripting — using Python, SQL, APIs, and shell tools.
+This repository contains hands-on work in **data engineering fundamentals**, including:
 
-## Table of Contents
-- [Web Scraping Projects](#web-scraping-projects)
-- [ETL Projects](#etl-projects)
+- Web scraping
+- ETL pipelines
+- API data ingestion
+- Data transformation
+- SQLite database operations
+- Shell-based data processing
+- Data normalization concepts
 
----
-
-## Web Scraping Projects
-
-- [ibm_webscraping](./ibm_webscraping/) — Scrape data using the Python `requests` library  
-- [wiki](./wiki/) — Use `requests` and `BeautifulSoup` to navigate HTML  
-- [REST_API](./REST_API/) — Interact with 3 REST APIs: RandomUser, Fruityvice, Open Joke API  
-- [banks](./banks/) — Scrape bank table data using `BeautifulSoup`  
-- [beautifulSoup](./beautifulSoup/) — Parse table data from HTML with `BeautifulSoup`  
-- [webscrape_project_1](./webscrape_project_1/) — Scrape a wikitable, transform, and load into SQLite database
+The repository is organized into **Labs** (focused exercises) and **Projects** (larger multi-step pipelines).
 
 ---
 
-## ETL Projects
+# Repository Structure
+---
 
-- [etl_project_1](./etl_project_1/) — Extract from CSV/XML/JSON → transform to international units → load to CSV  
-- [etl_project_2](./etl_project_2/) — Extract and transform price data to 2 decimals → load to CSV  
-- [connect_to_db](./connect_to_db/) — Load local CSV data into SQLite3  
-- [gdp_country](./gdp_country/) — Automate GDP data ETL from IMF, with logging  
-- [sqlite3_project_1](./sqlite3_project_1/) — Normalize a dataset to 2NF using Pandas + SQLite3  
-- [shell_etl_project_1](./shell_etl_project_1/) — Perform ETL using shell scripting and SQLite3
+# Labs
+
+Labs demonstrate specific techniques or technologies used in data engineering.
+
+| Lab | Description |
+|----|----|
+| `database_connection_basics` | Load CSV data into SQLite using Python |
+| `etl_multi_format_csv_json_xml` | Extract data from CSV, JSON, and XML formats and transform to metric units |
+| `html_parsing_beautifulsoup` | Explore HTML parsing with BeautifulSoup |
+| `multi_format_price_etl` | Simple ETL pipeline for price normalization |
+| `requests_http_basics` | Make HTTP requests and inspect responses using Python |
+| `rest_api_data_fetching` | Retrieve structured data from REST APIs |
+| `sqlite_2nf_normalization_demo` | Demonstration of database normalization to Second Normal Form (2NF) |
+| `wikipedia_bank_table_scraper` | Scrape structured tables from Wikipedia |
+| `wikipedia_html_parsing` | Extract and analyze HTML content from Wikipedia pages |
+
+---
+
+# Projects
+
+Projects combine multiple data engineering skills into practical pipelines.
+
+| Project | Description |
+|----|----|
+| `gdp_country_pipeline` | ETL pipeline that extracts GDP data, transforms values, and loads results into SQLite |
+| `shell_etl_psswd_to_sqlite` | Demonstrates ETL using shell tools (`cut`, `tr`, `sed`) and loads results into SQLite |
+| `top_movies_webscrape_etl` | Web scraping pipeline that extracts movie rankings, transforms data, and stores results in SQLite |
+
+---
+
+# Technologies Used
+
+- Python
+- Pandas
+- BeautifulSoup
+- Requests
+- SQLite
+- Shell scripting
+- XML / JSON / CSV processing
+
+---
+
+# Purpose
+
+This repository demonstrates core **data engineering skills and workflows**, including:
+
+- Building reproducible ETL pipelines
+- Extracting data from web sources and APIs
+- Transforming and validating structured data
+- Loading results into relational databases
+- Automating data workflows with scripts
