@@ -9,12 +9,14 @@ This repository contains hands-on work in **data engineering fundamentals**, inc
 - SQLite database operations
 - Shell-based data processing
 - Data normalization concepts
+- Bioinformatics data pipelines
 
 The repository is organized into **Labs** (focused exercises) and **Projects** (larger multi-step pipelines).
 
 ---
 
 # Repository Structure
+
 ---
 
 # Labs
@@ -41,6 +43,7 @@ Projects combine multiple data engineering skills into practical pipelines.
 
 | Project | Description |
 |----|----|
+| `gene_metadata_pipeline` | **Bioinformatics ETL pipeline** that extracts human gene metadata from the Ensembl REST API, transforms JSON responses into structured tabular data, and loads results into SQLite |
 | `gdp_country_pipeline` | ETL pipeline that extracts GDP data, transforms values, and loads results into SQLite |
 | `shell_etl_psswd_to_sqlite` | Demonstrates ETL using shell tools (`cut`, `tr`, `sed`) and loads results into SQLite |
 | `top_movies_webscrape_etl` | Web scraping pipeline that extracts movie rankings, transforms data, and stores results in SQLite |
@@ -55,6 +58,7 @@ Projects combine multiple data engineering skills into practical pipelines.
 - Requests
 - SQLite
 - Shell scripting
+- REST APIs
 - XML / JSON / CSV processing
 
 ---
@@ -68,3 +72,4 @@ This repository demonstrates core **data engineering skills and workflows**, inc
 - Transforming and validating structured data
 - Loading results into relational databases
 - Automating data workflows with scripts
+- Working with scientific datasets such as genomic metadata
