@@ -13,7 +13,8 @@ from .config import PROCESSED_CSV_PATH
 
 def transform_gene_data(raw_data: list[dict]) -> pd.DataFrame:
     """
-    Convert raw Ensembl API responses into a structured dataframe.
+    Convert raw Ensembl API responses into a structured dataframe
+    and perform basic data validation.
     """
     records = []
 
@@ -32,6 +33,15 @@ def transform_gene_data(raw_data: list[dict]) -> pd.DataFrame:
         )
 
     dataframe = pd.DataFrame(records)
+
+    # Data Validation & Cleaning
+    dataframe = dataframe.dropna(subset=["gene_symbol", "ensembl_id"])  # remove incomplete records
+    dataframe = dataframe.drop_duplicates()  # remove duplicate rows
+
+    # enforce numeric types (invalid values become NaN)
+    dataframe["start_position"] = pd.to_numeric(dataframe["start_position"], errors="coerce")
+    dataframe["end_position"] = pd.to_numeric(dataframe["end_position"], errors="coerce")
+
     return dataframe
 
 
@@ -45,3 +55,4 @@ def save_processed_data(
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
     dataframe.to_csv(output_file, index=False)
+    
