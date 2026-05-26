@@ -16,7 +16,7 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 
 | Project | Description |
 |----|----|
-| `healthcare_claims_etl` | End-to-end healthcare claims ETL pipeline using Python, PostgreSQL, Airflow, and analytics-ready transformations |
+| [healthcare_claims_etl](.projects/healthcare/healthcare_claims_etl) | End-to-end healthcare claims ETL pipeline using Python, PostgreSQL, Airflow, and analytics-ready transformations |
 | `healthcare_streaming_pipeline` | Real-time patient vitals streaming pipeline using Kafka and event-driven processing |
 
 ## Bioinformatics
