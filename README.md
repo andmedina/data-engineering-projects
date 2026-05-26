@@ -19,11 +19,11 @@ Projects combine multiple data engineering skills into practical pipelines.
 
 ---
 
-# Labs
+# Techniques
 
-Labs demonstrate specific techniques used in data engineering workflows.
+Techniques demonstrate specific techniques used in data engineering workflows.
 
-| Lab | Description |
+| Technique | Description |
 |----|----|
 | `database_connection_basics` | Load CSV data into SQLite using Python |
 | `etl_multi_format_csv_json_xml` | Extract data from CSV, JSON, and XML formats and transform to metric units |
