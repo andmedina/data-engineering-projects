@@ -5,10 +5,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 
-RAW_DATA_DIR = (
-    "projects/healthcare/"
-    "healthcare_claims_etl/data/raw"
-)
+RAW_DATA_DIR = "data/raw"
 
 STATES = [
     "CA",
