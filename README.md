@@ -2,7 +2,7 @@
 
 This repository contains hands-on work in **data engineering fundamentals**, including ETL pipelines, web scraping, API ingestion, data transformation, and database workflows using Python and SQL.
 
-The repository is organized into **Projects** (multi-step pipelines) and **Labs** (focused technical exercises).
+The repository is organized into **Projects** (multi-step pipelines) and **Techniques** (important techniques used).
 
 ---
 
