@@ -2,18 +2,16 @@
 
 import pandas as pd
 
+from extract import extract_raw_data
 from transform import (
     transform_claims,
     transform_patients,
     transform_providers
 )
 from validate import validate_claims_data
-from extract import extract_raw_data
 
-RAW_DATA_DIR = "data/raw"
+
 PROCESSED_DATA_DIR = "data/processed"
-
-
 
 
 def save_processed_data(
