@@ -8,23 +8,12 @@ from transform import (
     transform_providers
 )
 from validate import validate_claims_data
-
+from extract import extract_raw_data
 
 RAW_DATA_DIR = "data/raw"
 PROCESSED_DATA_DIR = "data/processed"
 
 
-def load_raw_data() -> tuple[
-    pd.DataFrame,
-    pd.DataFrame,
-    pd.DataFrame
-]:
-    """Load raw CSV files into pandas DataFrames."""
-    patients = pd.read_csv(f"{RAW_DATA_DIR}/patients.csv")
-    providers = pd.read_csv(f"{RAW_DATA_DIR}/providers.csv")
-    claims = pd.read_csv(f"{RAW_DATA_DIR}/claims.csv")
-
-    return patients, providers, claims
 
 
 def save_processed_data(
@@ -51,7 +40,7 @@ def save_processed_data(
 
 def main() -> None:
     """Run the healthcare claims ETL workflow."""
-    patients, providers, claims = load_raw_data()
+    patients, providers, claims = extract_raw_data()
 
     validate_claims_data(
         claims=claims,
