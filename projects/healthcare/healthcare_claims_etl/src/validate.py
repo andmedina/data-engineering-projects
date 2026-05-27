@@ -1,5 +1,8 @@
 """Validation functions for healthcare claims ETL pipeline."""
 
+import pandas as pd
+
+
 VALID_CLAIM_STATUSES = [
     "Approved",
     "Denied",
@@ -7,7 +10,11 @@ VALID_CLAIM_STATUSES = [
 ]
 
 
-def validate_required_columns(dataframe, required_columns, dataset_name):
+def validate_required_columns(
+    dataframe: pd.DataFrame,
+    required_columns: list[str],
+    dataset_name: str
+) -> None:
     """Validate that all required columns exist."""
     missing_columns = [
         column for column in required_columns
@@ -21,7 +28,11 @@ def validate_required_columns(dataframe, required_columns, dataset_name):
         )
 
 
-def validate_no_nulls(dataframe, columns, dataset_name):
+def validate_no_nulls(
+    dataframe: pd.DataFrame,
+    columns: list[str],
+    dataset_name: str
+) -> None:
     """Validate that selected columns do not contain null values."""
     for column in columns:
         null_count = dataframe[column].isnull().sum()
@@ -33,7 +44,9 @@ def validate_no_nulls(dataframe, columns, dataset_name):
             )
 
 
-def validate_claim_amounts(claims):
+def validate_claim_amounts(
+    claims: pd.DataFrame
+) -> None:
     """Validate claim amounts are positive."""
     invalid_count = (claims["claim_amount"] <= 0).sum()
 
@@ -44,10 +57,14 @@ def validate_claim_amounts(claims):
         )
 
 
-def validate_claim_statuses(claims):
+def validate_claim_statuses(
+    claims: pd.DataFrame
+) -> None:
     """Validate claim statuses are within the accepted set."""
     invalid_statuses = claims[
-        ~claims["claim_status"].isin(VALID_CLAIM_STATUSES)
+        ~claims["claim_status"].isin(
+            VALID_CLAIM_STATUSES
+        )
     ]
 
     if not invalid_statuses.empty:
@@ -56,14 +73,22 @@ def validate_claim_statuses(claims):
         )
 
 
-def validate_foreign_keys(claims, patients, providers):
+def validate_foreign_keys(
+    claims: pd.DataFrame,
+    patients: pd.DataFrame,
+    providers: pd.DataFrame
+) -> None:
     """Validate that claims reference valid patients and providers."""
     invalid_patients = claims[
-        ~claims["patient_id"].isin(patients["patient_id"])
+        ~claims["patient_id"].isin(
+            patients["patient_id"]
+        )
     ]
 
     invalid_providers = claims[
-        ~claims["provider_id"].isin(providers["provider_id"])
+        ~claims["provider_id"].isin(
+            providers["provider_id"]
+        )
     ]
 
     if not invalid_patients.empty:
@@ -79,7 +104,11 @@ def validate_foreign_keys(claims, patients, providers):
         )
 
 
-def validate_claims_data(claims, patients, providers):
+def validate_claims_data(
+    claims: pd.DataFrame,
+    patients: pd.DataFrame,
+    providers: pd.DataFrame
+) -> None:
     """Run all validation checks for claims data."""
     validate_required_columns(
         claims,
@@ -111,4 +140,9 @@ def validate_claims_data(claims, patients, providers):
 
     validate_claim_amounts(claims)
     validate_claim_statuses(claims)
-    validate_foreign_keys(claims, patients, providers)
+
+    validate_foreign_keys(
+        claims,
+        patients,
+        providers
+    )

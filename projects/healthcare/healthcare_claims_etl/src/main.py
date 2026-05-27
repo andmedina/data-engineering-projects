@@ -8,7 +8,11 @@ from validate import validate_claims_data
 RAW_DATA_DIR = "data/raw"
 
 
-def load_raw_data():
+def load_raw_data() -> tuple[
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame
+]:
     """Load raw CSV files into pandas DataFrames."""
     patients = pd.read_csv(f"{RAW_DATA_DIR}/patients.csv")
     providers = pd.read_csv(f"{RAW_DATA_DIR}/providers.csv")
@@ -17,7 +21,7 @@ def load_raw_data():
     return patients, providers, claims
 
 
-def main():
+def main() -> None:
     """Run the healthcare claims ETL validation workflow."""
     patients, providers, claims = load_raw_data()
 

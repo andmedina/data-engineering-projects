@@ -1,3 +1,5 @@
+"""Generate synthetic healthcare claims datasets."""
+
 import os
 import random
 from datetime import datetime, timedelta
@@ -65,10 +67,10 @@ CLAIM_STATUSES = [
 ]
 
 
-def generate_patients(count=500):
-    """
-    Generate synthetic patient records.
-    """
+def generate_patients(
+    count: int = 500
+) -> pd.DataFrame:
+    """Generate synthetic patient records."""
     patients = []
 
     for index in range(1, count + 1):
@@ -82,10 +84,10 @@ def generate_patients(count=500):
     return pd.DataFrame(patients)
 
 
-def generate_providers(count=50):
-    """
-    Generate synthetic provider records.
-    """
+def generate_providers(
+    count: int = 50
+) -> pd.DataFrame:
+    """Generate synthetic provider records."""
     providers = []
 
     for index in range(1, count + 1):
@@ -100,13 +102,11 @@ def generate_providers(count=50):
 
 
 def generate_claims(
-    count=3000,
-    patient_count=500,
-    provider_count=50
-):
-    """
-    Generate synthetic healthcare claims data.
-    """
+    count: int = 3000,
+    patient_count: int = 500,
+    provider_count: int = 50
+) -> pd.DataFrame:
+    """Generate synthetic healthcare claims data."""
     claims = []
 
     start_date = datetime(2023, 1, 1)
@@ -147,10 +147,8 @@ def generate_claims(
     return pd.DataFrame(claims)
 
 
-def main():
-    """
-    Generate all synthetic healthcare datasets.
-    """
+def main() -> None:
+    """Generate all synthetic healthcare datasets."""
     os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
     patients = generate_patients()
