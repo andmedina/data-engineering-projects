@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS claims (
     diagnosis_code VARCHAR(20),
     procedure_code VARCHAR(20),
     claim_date DATE NOT NULL,
+    claim_year INTEGER,
+    claim_month INTEGER,
     claim_amount NUMERIC(10, 2) NOT NULL,
     insurance_plan VARCHAR(100),
     claim_status VARCHAR(30),

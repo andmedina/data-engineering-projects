@@ -3,6 +3,7 @@
 import pandas as pd
 
 from extract import extract_raw_data
+from load import load_processed_data
 from transform import (
     transform_claims,
     transform_patients,
@@ -51,6 +52,12 @@ def main() -> None:
     transformed_claims = transform_claims(claims)
 
     save_processed_data(
+        patients=transformed_patients,
+        providers=transformed_providers,
+        claims=transformed_claims
+    )
+
+    load_processed_data(
         patients=transformed_patients,
         providers=transformed_providers,
         claims=transformed_claims
