@@ -158,13 +158,11 @@ The PostgreSQL warehouse contains relational healthcare tables connected through
 
 The ETL pipeline successfully loads transformed healthcare claims data into PostgreSQL relational tables.
 
-## Table Validation
+## PostgreSQL Validation and Relational Query Example
 
-![PostgreSQL Tables](images/postgresql_tables.png)
+The ETL pipeline successfully loads transformed healthcare claims data into PostgreSQL relational tables and supports SQL-based analytical joins.
 
-## Example Relational Join Query
-
-![PostgreSQL Join Query](images/postgresql_join_query.png)
+![PostgreSQL Validation](images/postgresql_validation.png)
 
 ---
 
