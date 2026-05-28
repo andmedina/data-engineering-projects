@@ -1,7 +1,7 @@
 """Run the CAD-to-ERP engineering data pipeline."""
 
 from extract import extract_all_sources
-from load import save_processed_data
+from load import load_dataframes_to_postgres, save_processed_data
 from transform import transform_all_sources
 from validate import (
     validate_inventory_data,
@@ -25,6 +25,7 @@ def main() -> None:
     transformed_dataframes = transform_all_sources(source_dataframes)
 
     save_processed_data(transformed_dataframes)
+    load_dataframes_to_postgres(transformed_dataframes)
 
     print("CAD-to-ERP pipeline executed successfully.")
 
