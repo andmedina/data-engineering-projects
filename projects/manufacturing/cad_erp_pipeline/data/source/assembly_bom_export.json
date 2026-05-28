@@ -1,0 +1,36 @@
+[
+  {
+    "assembly_id": "ASM-001",
+    "assembly_name": "Solid Rocket Motor Assembly",
+    "revision": "A",
+    "parts": [
+      {
+        "part_number": "KSD-AER-1001",
+        "quantity": 1
+      },
+      {
+        "part_number": "KSD-AER-1002",
+        "quantity": 1
+      },
+      {
+        "part_number": "KSD-AER-1004",
+        "quantity": 3
+      }
+    ]
+  },
+  {
+    "assembly_id": "ASM-002",
+    "assembly_name": "Avionics Support Assembly",
+    "revision": "B",
+    "parts": [
+      {
+        "part_number": "KSD-AER-1003",
+        "quantity": 4
+      },
+      {
+        "part_number": "KSD-AER-1004",
+        "quantity": 2
+      }
+    ]
+  }
+]

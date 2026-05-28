@@ -1,0 +1,42 @@
+[
+  {
+    "part_number": "KSD-AER-1001",
+    "part_name": "Composite Motor Casing",
+    "revision": "A",
+    "material": "Carbon Fiber Composite",
+    "weight_kg": 18.7,
+    "cad_system": "CATIA",
+    "engineering_status": "released",
+    "supplier_id": "SUP-001"
+  },
+  {
+    "part_number": "KSD-AER-1002",
+    "part_name": "Nozzle Housing",
+    "revision": "B",
+    "material": "Titanium Alloy",
+    "weight_kg": 7.4,
+    "cad_system": "CATIA",
+    "engineering_status": "released",
+    "supplier_id": "SUP-002"
+  },
+  {
+    "part_number": "KSD-AER-1003",
+    "part_name": "Avionics Mounting Bracket",
+    "revision": "A",
+    "material": "Aluminum 7075",
+    "weight_kg": 1.9,
+    "cad_system": "SolidWorks",
+    "engineering_status": "in_review",
+    "supplier_id": "SUP-003"
+  },
+  {
+    "part_number": "KSD-AER-1004",
+    "part_name": "Thermal Shield Panel",
+    "revision": "C",
+    "material": "Ceramic Composite",
+    "weight_kg": 4.2,
+    "cad_system": "NX",
+    "engineering_status": "released",
+    "supplier_id": "SUP-004"
+  }
+]
