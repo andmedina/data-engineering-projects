@@ -70,15 +70,15 @@ Techniques demonstrate focused concepts commonly used in data engineering workfl
 
 | Technique | Description |
 |----|----|
-| `database_connection_basics` | Loading CSV data into SQLite using Python |
-| `etl_multi_format_csv_json_xml` | Processing CSV, JSON, and XML datasets into standardized formats |
-| `html_parsing_beautifulsoup` | HTML parsing and structured extraction using BeautifulSoup |
-| `multi_format_price_etl` | Multi-format ETL pipeline for price normalization |
-| `requests_http_basics` | HTTP request handling and response inspection using Python |
-| `rest_api_data_fetching` | Retrieving and processing structured data from REST APIs |
-| `sqlite_2nf_normalization_demo` | Demonstration of relational database normalization to Second Normal Form |
-| `wikipedia_bank_table_scraper` | Structured table extraction from Wikipedia pages |
-| `wikipedia_html_parsing` | HTML extraction and parsing workflows for semi-structured web data |
+| [database_connection_basics](./techniques/database_connection_basics/) | Loading CSV data into SQLite using Python |
+| [etl_multi_format_csv_json_xml](./techniques/etl_multi_format_csv_json_xml/) | Processing CSV, JSON, and XML datasets into standardized formats |
+| [html_parsing_beautifulsoup](./techniques/html_parsing_beautifulsoup/) | HTML parsing and structured extraction using BeautifulSoup |
+| [multi_format_price_etl](./techniques/multi_format_price_etl/) | Multi-format ETL pipeline for price normalization |
+| [requests_http_basics](./techniques/requests_http_basics/) | HTTP request handling and response inspection using Python |
+| [rest_api_data_fetching](./techniques/rest_api_data_fetching/) | Retrieving and processing structured data from REST APIs |
+| [sqlite_2nf_normalization_demo](./techniques/sqlite_2nf_normalization_demo/) | Demonstration of relational database normalization to Second Normal Form |
+| [wikipedia_bank_table_scraper](./techniques/wikipedia_bank_table_scraper/) | Structured table extraction from Wikipedia pages |
+| [wikipedia_html_parsing](./techniques/wikipedia_html_parsing/) | HTML extraction and parsing workflows for semi-structured web data |
 
 ---
 
