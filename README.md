@@ -22,17 +22,6 @@ Projects are organized into:
 
 ---
 
-## Example Pipeline Architecture
-
-```mermaid
-flowchart LR
-    A[Source Data/API] --> B[Python ETL Pipeline]
-    B --> C[Validation & Transformation]
-    C --> D[(PostgreSQL / SQLite)]
-    D --> E[Analytics & Reporting]
-```
-
----
 
 # Projects
 
