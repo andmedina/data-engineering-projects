@@ -49,7 +49,7 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 
 | Project | Description |
 |----|----|
-| `cad_erp_pipeline` | Engineering metadata ETL pipeline simulating CAD-to-ERP workflows for manufacturing environments using Python, PostgreSQL, and structured BOM processing |
+| [cad_erp_pipeline](./projects/manufacturing/cad_erp_pipeline) | Engineering metadata ETL pipeline simulating CAD-to-ERP workflows for manufacturing environments using Python, PostgreSQL, and structured BOM processing |
 | `engineering_bom_analytics` | Relational manufacturing dataset modeling assemblies, part revisions, suppliers, and inventory analytics for engineering reporting workflows |
 
 ---
