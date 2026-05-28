@@ -1,5 +1,17 @@
 # Data Engineering Portfolio
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Data_Engineering-Portfolio-blue?style=for-the-badge">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
+  <img src="https://img.shields.io/badge/Apache_Airflow-017CEE?style=for-the-badge&logo=apache-airflow&logoColor=white">
+  <img src="https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white">
+  <img src="https://img.shields.io/badge/SQL-025E8C?style=for-the-badge">
+</p>
+
 This repository contains data engineering projects focused on ETL development, data pipelines, API ingestion, web scraping, database workflows, analytics engineering, and domain-specific data systems using Python and SQL.
 
 Projects span healthcare, bioinformatics, and engineering/manufacturing data workflows.
@@ -10,32 +22,50 @@ Projects are organized into:
 
 ---
 
+## Example Pipeline Architecture
+
+```mermaid
+flowchart LR
+    A[Source Data/API] --> B[Python ETL Pipeline]
+    B --> C[Validation & Transformation]
+    C --> D[(PostgreSQL / SQLite)]
+    D --> E[Analytics & Reporting]
+```
+
+---
+
 # Projects
 
 Projects combine multiple data engineering concepts into realistic, multi-stage workflows.
 
-## Healthcare
+## 🏥 Healthcare
 
 | Project | Description |
 |----|----|
 | [healthcare_claims_etl](./projects/healthcare/healthcare_claims_etl/) | End-to-end healthcare claims ETL pipeline using Python, PostgreSQL, Airflow, and analytics-ready transformations |
 | `healthcare_streaming_pipeline` | Real-time patient vitals streaming pipeline using Kafka and event-driven processing |
 
-## Bioinformatics
+---
+
+## 🧬 Bioinformatics
 
 | Project | Description |
 |----|----|
 | [gene_metadata_pipeline](./projects/gene_metadata_pipeline/) | Bioinformatics ETL pipeline extracting genomic metadata from the Ensembl API and loading structured results into SQLite |
 | `genomics_data_pipeline` | Pipeline for processing biological sequence data into analytics-ready relational datasets |
 
-## Engineering & Manufacturing Data Systems
+---
+
+## ✈️ Engineering & Manufacturing Data Systems
 
 | Project | Description |
 |----|----|
 | `cad_erp_pipeline` | Engineering metadata ETL pipeline simulating CAD-to-ERP workflows for manufacturing environments using Python, PostgreSQL, and structured BOM processing |
 | `engineering_bom_analytics` | Relational manufacturing dataset modeling assemblies, part revisions, suppliers, and inventory analytics for engineering reporting workflows |
 
-## General Data Engineering
+---
+
+## ⚙️ General Data Engineering
 
 | Project | Description |
 |----|----|
