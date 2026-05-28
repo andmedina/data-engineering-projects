@@ -11,7 +11,7 @@
 
 This project simulates a real-world aerospace manufacturing and engineering data pipeline that integrates CAD/PLM-style engineering metadata with ERP and inventory-style operational datasets.
 
-The pipeline extracts engineering source exports, validates manufacturing data quality, transforms nested Bill of Materials (BOM) structures into relational tables, and produces analytics-ready datasets for downstream reporting and operational workflows.
+The pipeline extracts engineering source exports, generates scalable synthetic manufacturing datasets, validates manufacturing data quality, transforms nested Bill of Materials (BOM) structures into relational tables, and produces analytics-ready datasets for downstream reporting and operational workflows.
 
 This project was designed to simulate engineering/manufacturing data environments commonly found in:
 - aerospace manufacturing
@@ -26,10 +26,12 @@ This project was designed to simulate engineering/manufacturing data environment
 
 ```mermaid
 flowchart LR
-    A[CAD / ERP Source Exports] --> B[Extract Layer]
-    B --> C[Validation Layer]
-    C --> D[Transformation Layer]
-    D --> E[Processed Analytics Tables]
+    A[Source Engineering Exports] --> B[Synthetic Scaling Layer]
+    B --> C[Raw Operational Datasets]
+    C --> D[Extract Layer]
+    D --> E[Validation Layer]
+    E --> F[Transformation Layer]
+    F --> G[Processed Analytics Tables]
 ```
 
 ---
@@ -54,13 +56,36 @@ flowchart TD
 # Key Features
 
 - Extracts engineering and manufacturing source exports
+- Generates scalable synthetic aerospace manufacturing datasets
 - Processes JSON and CSV operational datasets
 - Validates engineering metadata and supplier relationships
 - Flattens nested BOM structures into relational tables
-- Generates analytics-ready manufacturing datasets
+- Produces analytics-ready manufacturing datasets
 - Simulates CAD-to-ERP engineering workflows
 - Demonstrates modular ETL pipeline architecture
 - Implements inventory business-rule transformations
+- Simulates operational-scale manufacturing environments
+
+---
+
+# Synthetic Operational Scaling
+
+The project includes a synthetic scaling layer that expands seed engineering exports into larger operational manufacturing datasets.
+
+This allows the pipeline to simulate:
+- large aerospace part inventories
+- multi-assembly manufacturing relationships
+- operational warehouse inventory tracking
+- ERP-style manufacturing datasets
+- scalable relational manufacturing workflows
+
+Example scaling:
+- hundreds of engineering parts
+- dozens of assemblies
+- large relational BOM relationships
+- expanded inventory operations
+
+This simulates how engineering metadata may evolve into larger operational manufacturing datasets inside real enterprise environments.
 
 ---
 
@@ -147,6 +172,24 @@ cad_erp_pipeline/
 
 ---
 
+# Raw Operational Outputs
+
+The synthetic scaling layer generates larger operational manufacturing datasets inside:
+
+```text
+data/raw/
+```
+
+Generated datasets include:
+- large engineering parts datasets
+- expanded assembly relationships
+- operational inventory records
+- relational manufacturing BOM tables
+
+These datasets simulate operational-scale aerospace manufacturing environments.
+
+---
+
 # Processed Outputs
 
 | Output File | Description |
@@ -206,8 +249,8 @@ Example public datasets and references:
 - PostgreSQL database integration
 - Automated SQL analytics reporting
 - Airflow workflow orchestration
-- Synthetic large-scale manufacturing data generation
 - Engineering revision history tracking
 - Supplier lead-time analytics
 - Inventory forecasting
 - Manufacturing KPI dashboards
+- Real-time manufacturing event streaming
