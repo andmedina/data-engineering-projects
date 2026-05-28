@@ -1,6 +1,8 @@
 # Data Engineering Portfolio
 
-This repository contains data engineering projects focused on ETL development, data pipelines, API ingestion, web scraping, database workflows, and analytics engineering using Python and SQL.
+This repository contains data engineering projects focused on ETL development, data pipelines, API ingestion, web scraping, database workflows, analytics engineering, and domain-specific data systems using Python and SQL.
+
+Projects span healthcare, bioinformatics, and engineering/manufacturing data workflows.
 
 Projects are organized into:
 - **Projects** — larger end-to-end pipeline implementations
@@ -25,6 +27,13 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 |----|----|
 | [gene_metadata_pipeline](./projects/gene_metadata_pipeline/) | Bioinformatics ETL pipeline extracting genomic metadata from the Ensembl API and loading structured results into SQLite |
 | `genomics_data_pipeline` | Pipeline for processing biological sequence data into analytics-ready relational datasets |
+
+## Engineering & Manufacturing Data Systems
+
+| Project | Description |
+|----|----|
+| `cad_erp_pipeline` | Engineering metadata ETL pipeline simulating CAD-to-ERP workflows for manufacturing environments using Python, PostgreSQL, and structured BOM processing |
+| `engineering_bom_analytics` | Relational manufacturing dataset modeling assemblies, part revisions, suppliers, and inventory analytics for engineering reporting workflows |
 
 ## General Data Engineering
 
@@ -80,5 +89,6 @@ This repository demonstrates practical data engineering workflows including:
 - Transforming and validating structured datasets
 - Loading data into relational databases
 - Automating pipeline execution
-- Working with healthcare and bioinformatics datasets
-- Organizing analytics-ready data systems
+- Working with healthcare, bioinformatics, and engineering datasets
+- Modeling real-world operational data systems
+- Organizing analytics-ready infrastructure and reporting pipelines
