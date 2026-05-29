@@ -27,7 +27,7 @@ def main() -> None:
     Execute the full CAD-to-ERP ETL pipeline.
 
     Steps:
-    1. Extract raw source data
+    1. Extract source data
     2. Validate engineering and inventory data
     3. Transform into analytics-ready structures
     4. Save processed CSV outputs
@@ -36,16 +36,14 @@ def main() -> None:
     """
     start_time = time.time()
 
-    # ---------------- EXTRACT ----------------
     log_step("EXTRACT")
     source_dataframes = extract_all_sources()
 
     log_rows("parts (source)", source_dataframes["parts"])
+    log_rows("assemblies (source)", source_dataframes["assemblies"])
     log_rows("suppliers (source)", source_dataframes["suppliers"])
     log_rows("inventory (source)", source_dataframes["inventory"])
-    log_rows("bom (source)", source_dataframes["bom"])
 
-    # ---------------- VALIDATION ----------------
     log_step("VALIDATION")
 
     validate_parts_data(source_dataframes["parts"])
@@ -57,24 +55,20 @@ def main() -> None:
 
     print("Validation: OK")
 
-    # ---------------- TRANSFORM ----------------
     log_step("TRANSFORMATION")
     transformed_dataframes = transform_all_sources(source_dataframes)
 
     log_rows("parts (processed)", transformed_dataframes["parts"])
+    log_rows("suppliers (processed)", transformed_dataframes["suppliers"])
     log_rows("inventory (processed)", transformed_dataframes["inventory"])
     log_rows("bom (processed)", transformed_dataframes["bom"])
-    log_rows("suppliers (processed)", transformed_dataframes["suppliers"])
 
-    # ---------------- SAVE ----------------
     log_step("SAVE TO CSV")
     save_processed_data(transformed_dataframes)
 
-    # ---------------- LOAD ----------------
     log_step("LOAD TO POSTGRESQL")
     load_dataframes_to_postgres(transformed_dataframes)
 
-    # ---------------- SUMMARY ----------------
     end_time = time.time()
 
     print("\n================ PIPELINE SUMMARY ================")

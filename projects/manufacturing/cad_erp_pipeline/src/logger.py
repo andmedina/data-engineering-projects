@@ -1,17 +1,18 @@
-"""Simple logging utility for ETL pipeline."""
+"""Logging utility with per-run log files."""
 
 import logging
-from pathlib import Path
+from datetime import datetime
 
 from config import LOG_DIR
 
-LOG_DIR.mkdir(exist_ok=True, parents=True)
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-LOG_FILE = LOG_DIR / "pipeline.log"
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+LOG_FILE = LOG_DIR / f"pipeline_{timestamp}.log"
 
 
 def get_logger(name: str = "cad_erp_pipeline") -> logging.Logger:
-    """Create and configure logger for pipeline."""
+    """Create logger with file + console output."""
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 

@@ -1,7 +1,7 @@
 """Load transformed engineering and manufacturing data outputs."""
 
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
 from config import DATABASE_URL, PROCESSED_DATA_DIR
@@ -26,9 +26,36 @@ def get_database_engine() -> Engine:
     return create_engine(DATABASE_URL)
 
 
+def refresh_postgres_tables(engine: Engine) -> None:
+    """
+    Clear existing PostgreSQL records before loading fresh pipeline outputs.
+
+    This project uses a full-refresh loading pattern so the pipeline can be
+    rerun safely during local development and portfolio demonstrations.
+
+    In production, this would typically be replaced with staging tables,
+    incremental loads, or UPSERT logic.
+    """
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                """
+                TRUNCATE TABLE
+                    bom,
+                    inventory,
+                    parts,
+                    suppliers
+                RESTART IDENTITY CASCADE;
+                """
+            )
+        )
+
+
 def load_dataframes_to_postgres(dataframes: dict[str, pd.DataFrame]) -> None:
     """Load transformed datasets into PostgreSQL tables."""
     engine: Engine = get_database_engine()
+
+    refresh_postgres_tables(engine)
 
     load_order: list[str] = ["suppliers", "parts", "inventory", "bom"]
 
@@ -41,3 +68,26 @@ def load_dataframes_to_postgres(dataframes: dict[str, pd.DataFrame]) -> None:
             if_exists="append",
             index=False,
         )
+
+        print(f"Loaded {len(dataframe)} rows into {table_name}")
+
+
+# Production-oriented alternative:
+#
+# In a production system, the pipeline would usually avoid truncating final
+# tables directly. A more robust pattern would be:
+#
+# 1. Load incoming data into staging tables
+# 2. Validate staging data
+# 3. Merge staging records into final tables using UPSERT logic
+# 4. Track pipeline run metadata in an audit table
+#
+# Example PostgreSQL UPSERT pattern:
+#
+# INSERT INTO suppliers (supplier_id, supplier_name, country, supplier_type)
+# VALUES (...)
+# ON CONFLICT (supplier_id)
+# DO UPDATE SET
+#     supplier_name = EXCLUDED.supplier_name,
+#     country = EXCLUDED.country,
+#     supplier_type = EXCLUDED.supplier_type;
