@@ -11,7 +11,7 @@
 
 This project simulates a real-world aerospace manufacturing and engineering data pipeline that integrates CAD/PLM-style engineering metadata with ERP and inventory-style operational datasets.
 
-The pipeline extracts engineering source exports, generates scalable synthetic manufacturing datasets, validates manufacturing data quality, transforms nested Bill of Materials (BOM) structures into relational tables, and produces analytics-ready datasets for downstream reporting and operational workflows.
+The pipeline extracts engineering source exports, generates scalable synthetic manufacturing datasets, validates manufacturing data quality, transforms nested Bill of Materials (BOM) structures into relational tables, loads transformed datasets into PostgreSQL, generates automated data quality reports, and produces analytics-ready datasets for downstream reporting and operational workflows.
 
 This project was designed to simulate engineering/manufacturing data environments commonly found in:
 - aerospace manufacturing
@@ -65,6 +65,10 @@ flowchart TD
 - Demonstrates modular ETL pipeline architecture
 - Implements inventory business-rule transformations
 - Simulates operational-scale manufacturing environments
+- Loads transformed datasets into PostgreSQL
+- Generates automated data quality reports
+- Provides SQL analytics queries for operational reporting
+- Implements pipeline observability and execution metrics
 
 ---
 
@@ -194,10 +198,100 @@ These datasets simulate operational-scale aerospace manufacturing environments.
 
 | Output File | Description |
 |---|---|
-| `parts_processed.csv` | Cleaned engineering part metadata |
-| `bom_processed.csv` | Flattened relational BOM table |
-| `suppliers_processed.csv` | Standardized supplier dataset |
-| `inventory_processed.csv` | Inventory analytics dataset with derived business logic |
+| `parts_processed.csv` | Cleaned and standardized engineering part metadata with normalized revisions, materials, and engineering status values |
+| `bom_processed.csv` | Flattened relational Bill of Materials (BOM) table generated from nested assembly structures for SQL-based analysis |
+| `suppliers_processed.csv` | Standardized supplier master dataset with normalized supplier identifiers and procurement attributes |
+| `inventory_processed.csv` | Inventory analytics dataset containing warehouse inventory metrics and derived business logic such as reorder-level monitoring |
+| `data_quality_report.txt` | Automated data quality report summarizing row counts, missing values, duplicate records, and overall pipeline quality metrics |
+| PostgreSQL Tables | Transformed datasets loaded into PostgreSQL for downstream reporting, analytics, and operational workflows |
+
+
+---
+
+---
+
+# Data Quality Reporting
+
+The pipeline automatically generates a data quality report during execution.
+
+Generated report:
+
+```text
+logs/data_quality_report.txt
+```
+
+The report summarizes:
+
+- dataset row counts
+- column counts
+- missing values
+- duplicate rows
+- overall pipeline quality metrics
+
+Example output:
+
+```text
+Overall Summary
+--------------------
+Datasets Evaluated: 4
+Total Rows Processed: 17
+Total Missing Values: 0
+Total Duplicate Rows: 0
+
+Status: PASSED
+```
+
+This simulates enterprise data quality monitoring workflows commonly used in manufacturing and ERP environments.
+
+---
+
+# Analytics Queries
+
+The project includes example SQL analytics queries located in:
+
+```text
+sql/analytics_queries.sql
+```
+
+Example business use cases:
+
+- Inventory shortage monitoring
+- Supplier dependency analysis
+- Assembly complexity reporting
+- Engineering review tracking
+- Inventory exposure analysis
+- Manufacturing operational reporting
+
+Example analytics questions answered by the project:
+
+- Which parts are below reorder level?
+- Which suppliers support the most engineering components?
+- Which assemblies contain the largest number of parts?
+- Which warehouses hold the most inventory?
+- Which engineering parts are currently under review?
+
+These queries demonstrate how transformed ERP-style datasets can support downstream reporting and operational decision-making workflows.
+
+---
+
+# Pipeline Execution Example
+
+The pipeline provides execution observability throughout the ETL lifecycle, including extraction metrics, validation status, transformation statistics, data quality reporting, PostgreSQL load metrics, and runtime tracking.
+
+Example pipeline execution:
+
+![Pipeline Execution](images/pipeline_execution.png)
+
+Key execution metrics include:
+
+- source dataset row counts
+- transformed dataset row counts
+- validation status
+- data quality report generation
+- PostgreSQL load statistics
+- total pipeline runtime
+
+This observability layer helps simulate production-style monitoring and troubleshooting workflows commonly used in enterprise data engineering environments.
 
 ---
 
@@ -246,9 +340,9 @@ Example public datasets and references:
 
 # Future Improvements
 
-- PostgreSQL database integration
-- Automated SQL analytics reporting
-- Airflow workflow orchestration
+- Apache Airflow orchestration
+- Automated pipeline scheduling
+- ERP API integrations
 - Engineering revision history tracking
 - Supplier lead-time analytics
 - Inventory forecasting
