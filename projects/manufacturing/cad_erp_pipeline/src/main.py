@@ -4,6 +4,7 @@ import time
 
 from extract import extract_all_sources
 from load import load_dataframes_to_postgres, save_processed_data
+from report import generate_data_quality_report
 from transform import transform_all_sources
 from validate import (
     validate_inventory_data,
@@ -65,6 +66,10 @@ def main() -> None:
 
     log_step("SAVE TO CSV")
     save_processed_data(transformed_dataframes)
+
+    log_step("DATA QUALITY REPORT")
+    generate_data_quality_report(transformed_dataframes)
+    print("Data quality report generated")
 
     log_step("LOAD TO POSTGRESQL")
     load_dataframes_to_postgres(transformed_dataframes)
