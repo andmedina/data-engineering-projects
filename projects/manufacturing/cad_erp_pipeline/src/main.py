@@ -54,7 +54,7 @@ def main() -> None:
         source_dataframes["suppliers"],
     )
 
-    print("Validation: OK")
+    print("Validation checks passed")
 
     log_step("TRANSFORMATION")
     transformed_dataframes = transform_all_sources(source_dataframes)
@@ -69,7 +69,7 @@ def main() -> None:
 
     log_step("DATA QUALITY REPORT")
     generate_data_quality_report(transformed_dataframes)
-    print("Data quality report generated")
+    print("Data quality report saved to logs/data_quality_report.txt")
 
     log_step("LOAD TO POSTGRESQL")
     load_dataframes_to_postgres(transformed_dataframes)
