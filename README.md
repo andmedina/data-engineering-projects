@@ -2,14 +2,23 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Data_Engineering-Portfolio-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Analytics-Projects-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Machine_Learning-Applications-orange?style=for-the-badge">
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white">
-  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
-  <img src="https://img.shields.io/badge/Apache_Airflow-017CEE?style=for-the-badge&logo=apache-airflow&logoColor=white">
-  <img src="https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white">
   <img src="https://img.shields.io/badge/SQL-025E8C?style=for-the-badge">
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
+  <img src="https://img.shields.io/badge/Snowflake-29B5E8?style=for-the-badge&logo=snowflake&logoColor=white">
+  <img src="https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white">
+  <img src="https://img.shields.io/badge/Tableau-E97627?style=for-the-badge&logo=tableau&logoColor=white">
+  <img src="https://img.shields.io/badge/Apache_Airflow-017CEE?style=for-the-badge&logo=apache-airflow&logoColor=white">
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white">
 </p>
 
 This repository contains data engineering projects focused on ETL development, data pipelines, API ingestion, web scraping, database workflows, analytics engineering, and domain-specific data systems using Python and SQL.
@@ -49,8 +58,9 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 
 | Project | Description |
 |----|----|
-| [cad_erp_pipeline](./projects/manufacturing/cad_erp_pipeline) | Engineering metadata ETL pipeline simulating CAD-to-ERP workflows for manufacturing environments using Python, PostgreSQL, and structured BOM processing |
-| `engineering_bom_analytics` | Relational manufacturing dataset modeling assemblies, part revisions, suppliers, and inventory analytics for engineering reporting workflows |
+| ⭐ [manufacturing_intelligence_platform](./projects/manufacturing/manufacturing_intelligence_platform/) | End-to-end manufacturing analytics platform integrating simulated ERP, MES, quality, inventory, and IoT sensor data into a PostgreSQL warehouse with ETL pipelines, KPI reporting, root cause analysis, and predictive machine learning for operational decision support. Future enhancements include an AI-powered manufacturing assistant using large language models. |
+| [cad_erp_pipeline](./projects/manufacturing/cad_erp_pipeline/) | Engineering metadata ETL pipeline simulating CAD-to-ERP workflows for manufacturing environments using Python, PostgreSQL, and structured BOM processing. |
+| `engineering_bom_analytics` *(Planned)* | Relational manufacturing dataset modeling assemblies, part revisions, suppliers, and inventory analytics for engineering reporting workflows. |
 
 ---
 
