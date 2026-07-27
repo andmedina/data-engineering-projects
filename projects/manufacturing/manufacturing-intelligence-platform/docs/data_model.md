@@ -246,36 +246,61 @@ Example defects include:
 
 ## Order Management Entities
 
+Order management follows a standard header-detail design commonly used in ERP systems.
+
+- `customer_orders` stores order-level information (order header).
+- `customer_order_items` stores the individual products requested within each order (order lines).
+- `production_orders` stores the internal manufacturing orders created to fulfill each customer order item.
+
 ### `customer_orders`
 
-Stores external customer demand.
+Stores customer purchase orders received by the manufacturer.
 
-**Table grain:** One row per customer order.
+**Table grain:** One row per customer purchase order (order header).
 
 | Column | Description |
 |---|---|
 | `customer_order_id` | Unique customer-order identifier |
 | `customer_id` | Customer placing the order |
+| `customer_order_number` | Business-facing customer order number |
 | `order_date` | Date the order was received |
 | `requested_delivery_date` | Customer-requested delivery date |
 | `priority` | Standard, expedited, or critical |
 | `order_status` | Open, planned, in production, completed, shipped, or cancelled |
 
-A customer order may produce multiple internal production orders.
+A customer order contains one or more customer order items.
+
+---
+
+### `customer_order_items`
+
+Stores the individual products requested within a customer order.
+
+**Table grain:** One row per product line within a customer order.
+
+| Column | Description |
+|---|---|
+| `customer_order_item_id` | Unique customer order line identifier |
+| `customer_order_id` | Parent customer order |
+| `product_id` | Product requested by the customer |
+| `ordered_quantity` | Quantity requested |
+| `unit_price` | Price per unit (optional) |
+| `line_status` | Open, allocated, completed, or cancelled |
+
+Each customer order item may generate one or more production orders.
 
 ---
 
 ### `production_orders`
 
-Stores internal manufacturing orders created to produce a specific product.
+Stores internal manufacturing orders created to fulfill a specific customer order item.
 
-**Table grain:** One row per product planned for manufacturing under one production order.
+**Table grain:** One row per manufacturing order.
 
 | Column | Description |
 |---|---|
 | `production_order_id` | Unique production-order identifier |
-| `customer_order_id` | Related customer order |
-| `product_id` | Product being manufactured |
+| `customer_order_item_id` | Related customer order line |
 | `planned_quantity` | Quantity scheduled for production |
 | `actual_quantity` | Final completed quantity |
 | `planned_start_date` | Planned production start |
@@ -537,8 +562,9 @@ The grain defines exactly what one row represents in each table.
 | `machines` | One row per machine |
 | `operators` | One row per employee |
 | `defect_types` | One row per standardized defect type |
-| `customer_orders` | One row per customer order |
-| `production_orders` | One row per manufactured product order |
+| `customer_orders` | One row per customer purchase order (order header) |
+| `customer_order_items` | One row per product line within a customer order |
+| `production_orders` | One row per manufacturing order |
 | `material_lots` | One row per received supplier material lot |
 | `production_order_materials` | One row per material lot consumed by a production order |
 | `production_runs` | One row per production-order operation executed on one machine |
@@ -549,7 +575,6 @@ The grain defines exactly what one row represents in each table.
 | `sensor_readings` | One row per machine per sensor-reading timestamp |
 
 ---
-
 # Entity Relationships
 
 ## High-Level Relationship Diagram
@@ -559,23 +584,24 @@ customers
     │
     └── customer_orders
             │
-            └── production_orders
-                    │
+            └── customer_order_items
                     ├── products
                     │
-                    ├── production_runs
-                    │       ├── machines
-                    │       ├── operators
-                    │       ├── quality_inspections
-                    │       │       └── quality_defects
-                    │       │               └── defect_types
-                    │       │
-                    │       └── downtime_events
-                    │
-                    └── production_order_materials
-                            └── material_lots
-                                    ├── materials
-                                    └── suppliers
+                    └── production_orders
+                            │
+                            ├── production_runs
+                            │       ├── machines
+                            │       ├── operators
+                            │       ├── quality_inspections
+                            │       │       └── quality_defects
+                            │       │               └── defect_types
+                            │       │
+                            │       └── downtime_events
+                            │
+                            └── production_order_materials
+                                    └── material_lots
+                                            ├── materials
+                                            └── suppliers
 
 machines
     ├── maintenance_events
@@ -589,8 +615,9 @@ machines
 | Parent Entity | Relationship | Child Entity |
 |---|---|---|
 | `customers` | One-to-many | `customer_orders` |
-| `customer_orders` | One-to-many | `production_orders` |
-| `products` | One-to-many | `production_orders` |
+| `customer_orders` | One-to-many | `customer_order_items` |
+| `products` | One-to-many | `customer_order_items` |
+| `customer_order_items` | One-to-many | `production_orders` |
 | `production_orders` | One-to-many | `production_runs` |
 | `machines` | One-to-many | `production_runs` |
 | `operators` | One-to-many | `production_runs` |
@@ -742,30 +769,31 @@ The initial model uses the following assumptions:
 
 1. The project represents one manufacturing facility.
 2. All customers, suppliers, employees, and part numbers are fictional.
-3. A customer order may produce multiple production orders.
-4. Each production order manufactures one product.
-5. A production order may contain multiple production runs.
-6. Each production run represents one manufacturing operation on one machine.
-7. A production run has one primary operator.
-8. A production order may consume multiple material lots.
-9. One material lot may be consumed across multiple production orders.
-10. Quality inspections are linked to production runs.
-11. One inspection may identify multiple defect types.
-12. Downtime may occur during a production run or outside an active production run.
-13. Maintenance events are recorded separately from downtime events.
-14. Sensor readings are captured every five minutes.
-15. Sensor availability varies by machine type.
-16. Production quantities remain internally consistent:
+3. A customer order contains one or more customer order items.
+4. Each customer order item represents one product requested by the customer.
+5. Each production order fulfills one customer order item.
+6. A production order may contain multiple production runs.
+7. Each production run represents one manufacturing operation on one machine.
+8. A production run has one primary operator.
+9. A production order may consume multiple material lots.
+10. One material lot may be consumed across multiple production orders.
+11. Quality inspections are linked to production runs.
+12. One inspection may identify multiple defect types.
+13. Downtime may occur during a production run or outside an active production run.
+14. Maintenance events are recorded separately from downtime events.
+15. Sensor readings are captured every five minutes.
+16. Sensor availability varies by machine type.
+17. Production quantities remain internally consistent:
 
 ```text
 input_quantity =
 good_quantity + scrap_quantity + rework_quantity
 ```
 
-17. Downstream operation quantities should not exceed the available quantity from the preceding operation.
-18. Completed production orders should have an actual completion timestamp.
-19. Cancelled production orders should not generate completed production runs.
-20. Material-lot consumption should not exceed the lot’s received quantity.
+18. Downstream operation quantities should not exceed the available quantity from the preceding operation.
+19. Completed production orders should have an actual completion timestamp.
+20. Cancelled production orders should not generate completed production runs.
+21. Material-lot consumption should not exceed the lot's received quantity.
 
 ---
 
@@ -806,22 +834,23 @@ Tables should be created in dependency order.
 6. operators
 7. defect_types
 8. customer_orders
-9. production_orders
-10. material_lots
-11. production_order_materials
-12. production_runs
-13. quality_inspections
-14. quality_defects
-15. downtime_events
-16. maintenance_events
-17. sensor_readings
+9. customer_order_items
+10. production_orders
+11. material_lots
+12. production_order_materials
+13. production_runs
+14. quality_inspections
+15. quality_defects
+16. downtime_events
+17. maintenance_events
+18. sensor_readings
 ```
 
 ---
 
 # Future Schema Enhancements
 
-The initial schema is intentionally scoped for an interview-ready MVP. Future versions may include the following entities.
+The current schema focuses on the core entities required to support manufacturing operations, analytics, and machine learning workflows. Future iterations may expand the model with additional entities commonly found in enterprise manufacturing and ERP systems.
 
 ## Product Routing
 
