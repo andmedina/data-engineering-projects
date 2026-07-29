@@ -536,3 +536,281 @@ CREATE INDEX idx_customer_orders_status
 
 CREATE INDEX idx_customer_orders_order_date
     ON customer_orders (order_date);
+
+-- ------------------------------------------------------------
+-- CUSTOMER ORDER ITEMS
+-- One row per product line within a customer order.
+-- ------------------------------------------------------------
+
+CREATE TABLE customer_order_items (
+    customer_order_item_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    customer_order_id BIGINT NOT NULL,
+    line_number INTEGER NOT NULL,
+    product_id BIGINT NOT NULL,
+    ordered_quantity INTEGER NOT NULL,
+    unit_price NUMERIC(12,4) NOT NULL,
+    line_status VARCHAR(30) NOT NULL DEFAULT 'Open',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_customer_order_items
+        PRIMARY KEY (customer_order_item_id),
+
+    CONSTRAINT uq_customer_order_items_order_line
+        UNIQUE (customer_order_id, line_number),
+
+    CONSTRAINT fk_customer_order_items_order
+        FOREIGN KEY (customer_order_id)
+        REFERENCES customer_orders (customer_order_id),
+
+    CONSTRAINT fk_customer_order_items_product
+        FOREIGN KEY (product_id)
+        REFERENCES products (product_id),
+
+    CONSTRAINT chk_customer_order_items_line_number
+        CHECK (
+            line_number > 0
+        ),
+
+    CONSTRAINT chk_customer_order_items_quantity
+        CHECK (
+            ordered_quantity > 0
+        ),
+
+    CONSTRAINT chk_customer_order_items_unit_price
+        CHECK (
+            unit_price >= 0
+        ),
+
+    CONSTRAINT chk_customer_order_items_status
+        CHECK (
+            line_status IN (
+                'Open',
+                'Allocated',
+                'Partially Fulfilled',
+                'Completed',
+                'Cancelled'
+            )
+        )
+);
+
+
+-- ------------------------------------------------------------
+-- CUSTOMER ORDER ITEM INDEXES
+-- ------------------------------------------------------------
+
+CREATE INDEX idx_customer_order_items_order
+    ON customer_order_items (customer_order_id);
+
+CREATE INDEX idx_customer_order_items_product
+    ON customer_order_items (product_id);
+
+CREATE INDEX idx_customer_order_items_status
+    ON customer_order_items (line_status);
+
+-- ------------------------------------------------------------
+-- PRODUCTION ORDERS
+-- One row per manufacturing work order.
+-- ------------------------------------------------------------
+
+CREATE TABLE production_orders (
+    production_order_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    production_order_number VARCHAR(50) NOT NULL,
+    customer_order_item_id BIGINT NOT NULL,
+    machine_id BIGINT,
+    scheduled_start_date DATE,
+    scheduled_end_date DATE,
+    actual_start_timestamp TIMESTAMPTZ,
+    actual_end_timestamp TIMESTAMPTZ,
+    planned_quantity INTEGER NOT NULL,
+    completed_quantity INTEGER NOT NULL DEFAULT 0,
+    scrapped_quantity INTEGER NOT NULL DEFAULT 0,
+    production_status VARCHAR(30) NOT NULL DEFAULT 'Released',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_production_orders
+        PRIMARY KEY (production_order_id),
+
+    CONSTRAINT uq_production_orders_number
+        UNIQUE (production_order_number),
+
+    CONSTRAINT fk_production_orders_customer_order_item
+        FOREIGN KEY (customer_order_item_id)
+        REFERENCES customer_order_items (customer_order_item_id),
+
+    CONSTRAINT fk_production_orders_machine
+        FOREIGN KEY (machine_id)
+        REFERENCES machines (machine_id),
+
+    CONSTRAINT chk_production_orders_planned_quantity
+        CHECK (
+            planned_quantity > 0
+        ),
+
+    CONSTRAINT chk_production_orders_completed_quantity
+        CHECK (
+            completed_quantity >= 0
+        ),
+
+    CONSTRAINT chk_production_orders_scrapped_quantity
+        CHECK (
+            scrapped_quantity >= 0
+        ),
+
+    CONSTRAINT chk_production_orders_schedule_dates
+        CHECK (
+            scheduled_end_date IS NULL
+            OR scheduled_start_date IS NULL
+            OR scheduled_end_date >= scheduled_start_date
+        ),
+
+    CONSTRAINT chk_production_orders_actual_dates
+        CHECK (
+            actual_end_timestamp IS NULL
+            OR actual_start_timestamp IS NULL
+            OR actual_end_timestamp >= actual_start_timestamp
+        ),
+
+    CONSTRAINT chk_production_orders_status
+        CHECK (
+            production_status IN (
+                'Released',
+                'Scheduled',
+                'In Production',
+                'Completed',
+                'Cancelled'
+            )
+        )
+);
+
+
+-- ------------------------------------------------------------
+-- PRODUCTION ORDER INDEXES
+-- ------------------------------------------------------------
+
+CREATE INDEX idx_production_orders_customer_order_item
+    ON production_orders (customer_order_item_id);
+
+CREATE INDEX idx_production_orders_machine
+    ON production_orders (machine_id);
+
+CREATE INDEX idx_production_orders_status
+    ON production_orders (production_status);
+
+CREATE INDEX idx_production_orders_scheduled_start
+    ON production_orders (scheduled_start_date);
+
+-- ------------------------------------------------------------
+-- MATERIAL LOTS
+-- One row per unique supplier material lot.
+-- Quantities use the material's defined base unit of measure.
+-- Assumption: Each supplier lot is represented by one receipt.
+-- ------------------------------------------------------------
+
+CREATE TABLE material_lots (
+    material_lot_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    material_id BIGINT NOT NULL,
+    supplier_id BIGINT NOT NULL,
+    supplier_lot_number VARCHAR(100) NOT NULL,
+    received_date DATE NOT NULL,
+    quantity_received NUMERIC(14, 3) NOT NULL,
+    quantity_available NUMERIC(14, 3) NOT NULL,
+    lot_status VARCHAR(20) NOT NULL DEFAULT 'Available',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_material_lots
+        PRIMARY KEY (material_lot_id),
+
+    CONSTRAINT uq_material_lots_supplier_lot
+        UNIQUE (
+            supplier_id,
+            supplier_lot_number
+        ),
+
+    CONSTRAINT fk_material_lots_material
+        FOREIGN KEY (material_id)
+        REFERENCES materials (material_id),
+
+    CONSTRAINT fk_material_lots_supplier
+        FOREIGN KEY (supplier_id)
+        REFERENCES suppliers (supplier_id),
+
+    CONSTRAINT chk_material_lots_quantity_received
+        CHECK (
+            quantity_received > 0
+        ),
+
+    CONSTRAINT chk_material_lots_quantity_available
+        CHECK (
+            quantity_available >= 0
+            AND quantity_available <= quantity_received
+        ),
+
+    CONSTRAINT chk_material_lots_status
+        CHECK (
+            lot_status IN (
+                'Available',
+                'On Hold',
+                'Depleted',
+                'Rejected'
+            )
+        )
+);
+
+
+-- ------------------------------------------------------------
+-- MATERIAL LOT INDEXES
+-- ------------------------------------------------------------
+
+CREATE INDEX idx_material_lots_material
+    ON material_lots (material_id);
+
+CREATE INDEX idx_material_lots_supplier
+    ON material_lots (supplier_id);
+
+CREATE INDEX idx_material_lots_status
+    ON material_lots (lot_status);
+
+CREATE INDEX idx_material_lots_received_date
+    ON material_lots (received_date);
+
+-- ------------------------------------------------------------
+-- PRODUCTION ORDER MATERIALS
+-- One row per material lot allocated to a production order.
+-- ------------------------------------------------------------
+
+CREATE TABLE production_order_materials (
+    production_order_id BIGINT NOT NULL,
+    material_lot_id BIGINT NOT NULL,
+    allocated_quantity NUMERIC(14, 3) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_production_order_materials
+        PRIMARY KEY (
+            production_order_id,
+            material_lot_id
+        ),
+
+    CONSTRAINT fk_production_order_materials_production_order
+        FOREIGN KEY (production_order_id)
+        REFERENCES production_orders (production_order_id),
+
+    CONSTRAINT fk_production_order_materials_material_lot
+        FOREIGN KEY (material_lot_id)
+        REFERENCES material_lots (material_lot_id),
+
+    CONSTRAINT chk_production_order_materials_allocated_quantity
+        CHECK (
+            allocated_quantity > 0
+        )
+);
+
+
+-- ------------------------------------------------------------
+-- PRODUCTION ORDER MATERIAL INDEXES
+-- ------------------------------------------------------------
+
+CREATE INDEX idx_production_order_materials_material_lot
+    ON production_order_materials (material_lot_id);
+
+
+

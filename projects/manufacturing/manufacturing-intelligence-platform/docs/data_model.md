@@ -153,14 +153,15 @@ Defines the finished fastener products manufactured by the simulated facility.
 |---|---|
 | `product_id` | Unique product identifier |
 | `part_number` | Internal manufactured part number |
+| `product_name` | Human-readable product name or description |
 | `product_family` | Solid rivet, blind rivet, blind bolt, temporary fastener, or threaded insert |
-| `material_type` | Primary material used |
+| `material_id` | Primary material specification |
 | `diameter_in` | Product diameter in inches |
 | `length_in` | Product length in inches |
 | `finish_type` | Surface finish or coating |
 | `aerospace_specification` | Simulated engineering or aerospace specification |
 | `standard_cycle_time_seconds` | Expected cycle time per unit |
-| `unit_cost` | Estimated manufacturing cost per unit |
+| `standard_unit_cost` | Estimated manufacturing cost per unit |
 | `active_flag` | Indicates whether the part is currently manufactured |
 
 ---
@@ -266,7 +267,7 @@ Stores customer purchase orders received by the manufacturer.
 | `order_date` | Date the order was received |
 | `requested_delivery_date` | Customer-requested delivery date |
 | `priority` | Standard, expedited, or critical |
-| `order_status` | Open, planned, in production, completed, shipped, or cancelled |
+| `order_status` | Open, Released, Partialy Fulfilled, Completed, Canceled |
 
 A customer order contains one or more customer order items.
 
@@ -282,10 +283,11 @@ Stores the individual products requested within a customer order.
 |---|---|
 | `customer_order_item_id` | Unique customer order line identifier |
 | `customer_order_id` | Parent customer order |
+| `line_number` | Line number within the customer order |
 | `product_id` | Product requested by the customer |
 | `ordered_quantity` | Quantity requested |
-| `unit_price` | Price per unit (optional) |
-| `line_status` | Open, allocated, completed, or cancelled |
+| `unit_price` | Selling price per unit for this customer order line |
+| `line_status` | Open, allocated, partially fulfilled, completed, or cancelled |
 
 Each customer order item may generate one or more production orders.
 
@@ -770,7 +772,7 @@ The initial model uses the following assumptions:
 1. The project represents one manufacturing facility.
 2. All customers, suppliers, employees, and part numbers are fictional.
 3. A customer order contains one or more customer order items.
-4. Each customer order item represents one product requested by the customer.
+4. Each customer order item represents one product line requested by the customer within a customer order.
 5. Each production order fulfills one customer order item.
 6. A production order may contain multiple production runs.
 7. Each production run represents one manufacturing operation on one machine.
