@@ -292,70 +292,71 @@ Stores the individual products requested within a customer order.
 Each customer order item may generate one or more production orders.
 
 ---
-
 ### `production_orders`
 
-Stores internal manufacturing orders created to fulfill a specific customer order item.
+Stores internal manufacturing work orders created to fulfill a specific customer order item.
 
-**Table grain:** One row per manufacturing order.
+**Table grain:** One row per manufacturing work order.
 
 | Column | Description |
 |---|---|
 | `production_order_id` | Unique production-order identifier |
-| `customer_order_item_id` | Related customer order line |
+| `production_order_number` | Business-facing work order number |
+| `customer_order_item_id` | Customer order line being manufactured |
+| `machine_id` | Primary machine assigned to the work order, when scheduled |
+| `scheduled_start_date` | Planned production start date |
+| `scheduled_end_date` | Planned production completion date |
+| `actual_start_timestamp` | Actual production start timestamp |
+| `actual_end_timestamp` | Actual production completion timestamp |
 | `planned_quantity` | Quantity scheduled for production |
-| `actual_quantity` | Final completed quantity |
-| `planned_start_date` | Planned production start |
-| `actual_start_time` | Actual production start timestamp |
-| `planned_end_date` | Planned production completion |
-| `actual_end_time` | Actual production completion timestamp |
-| `order_status` | Planned, released, in progress, completed, on hold, or cancelled |
+| `completed_quantity` | Quantity successfully completed |
+| `scrapped_quantity` | Quantity scrapped during production |
+| `production_status` | Released, scheduled, in production, completed, or cancelled |
 
----
+A production order represents the manufacturing plan for a specific customer order item.
+
+Each production order may generate one or more production runs as work progresses through the manufacturing process.
 
 ## Material Traceability Entities
 
 ### `material_lots`
 
-Stores individual raw-material deliveries and supplier lot information.
+Stores individual supplier material lots received by the manufacturing facility.
 
-**Table grain:** One row per received raw-material lot.
+**Table grain:** One row per unique supplier material lot.
 
 | Column | Description |
 |---|---|
 | `material_lot_id` | Unique internal material-lot identifier |
-| `material_id` | Material specification |
-| `supplier_id` | Supplier that provided the lot |
-| `supplier_lot_number` | Supplier-provided lot number |
-| `received_date` | Date the lot was received |
-| `received_quantity` | Original quantity received |
-| `remaining_quantity` | Current available quantity |
-| `certificate_status` | Status of material certification documentation |
-| `inspection_status` | Incoming inspection status |
+| `material_id` | Material specification received |
+| `supplier_id` | Supplier providing the material |
+| `supplier_lot_number` | Supplier-provided lot identifier |
+| `received_date` | Date the material lot was received |
+| `quantity_received` | Original quantity received from the supplier |
+| `quantity_available` | Current quantity remaining available for production |
+| `lot_status` | Available, on hold, depleted, or rejected |
 
-This table supports traceability from the finished product back to the source material and supplier.
+Material lots provide raw-material traceability from finished products back to the originating supplier and supplier lot.
 
----
+For the initial version of the project, each supplier material lot is assumed to correspond to a single receipt.
 
 ### `production_order_materials`
 
-Connects production orders to the material lots consumed during manufacturing.
+Associates production orders with the material lots allocated to them for manufacturing.
 
-**Table grain:** One row per material lot consumed by a production order.
+**Table grain:** One row per material lot allocated to one production order.
 
 | Column | Description |
 |---|---|
-| `production_order_material_id` | Unique bridge-table identifier |
-| `production_order_id` | Production order consuming the material |
-| `material_lot_id` | Material lot used |
-| `quantity_consumed` | Quantity consumed from the lot |
-| `assigned_date` | Date the material was issued to production |
+| `production_order_id` | Production order receiving the material allocation |
+| `material_lot_id` | Material lot allocated to the production order |
+| `allocated_quantity` | Quantity allocated from the material lot |
 
 This bridge table resolves the many-to-many relationship between production orders and material lots.
 
-A production order may consume multiple material lots, and a material lot may be used across multiple production orders.
+A production order may consume material from multiple supplier lots, and a single supplier lot may be allocated across multiple production orders.
 
----
+The composite primary key (`production_order_id`, `material_lot_id`) ensures that each production order and material lot combination appears only once.
 
 ## Manufacturing Execution Entities
 
@@ -405,22 +406,26 @@ It connects:
 
 Stores inspections performed during or after a manufacturing operation.
 
-**Table grain:** One row per inspection event for one production run.
+**Table grain:** One row per inspection event performed for one production run.
 
 | Column | Description |
 |---|---|
 | `inspection_id` | Unique inspection identifier |
 | `production_run_id` | Production run being inspected |
-| `inspector_id` | Employee performing the inspection |
-| `inspection_time` | Inspection timestamp |
+| `inspector_id` | Operator performing the inspection |
+| `inspection_timestamp` | Timestamp of the inspection |
 | `sample_size` | Number of units inspected |
-| `passed_quantity` | Number of inspected units passing |
-| `failed_quantity` | Number of inspected units failing |
-| `inspection_result` | Pass, fail, conditional, or pending |
-| `measurement_type` | Characteristic measured |
-| `measured_value` | Recorded measurement |
-| `lower_spec_limit` | Minimum allowable value |
-| `upper_spec_limit` | Maximum allowable value |
+| `passed_quantity` | Number of units passing inspection |
+| `failed_quantity` | Number of units failing inspection |
+| `inspection_result` | Pass, Fail, Conditional, or Pending |
+| `measurement_type` | Primary characteristic being measured |
+| `measured_value` | Recorded measurement value |
+| `lower_spec_limit` | Lower specification limit |
+| `upper_spec_limit` | Upper specification limit |
+
+A production run may undergo multiple inspections throughout manufacturing.
+
+Each inspection records the outcome of a single inspection event and may identify one or more defect types, which are recorded separately in the `quality_defects` table.
 
 Example measurement types include:
 
@@ -438,19 +443,21 @@ For the initial version, one inspection row stores one primary measurement resul
 
 ### `quality_defects`
 
-Stores defects identified during an inspection.
+Stores defect types identified during a quality inspection.
 
-**Table grain:** One row per defect type recorded during one inspection.
+**Table grain:** One row per defect type identified during one quality inspection.
 
 | Column | Description |
 |---|---|
 | `quality_defect_id` | Unique quality-defect identifier |
-| `inspection_id` | Inspection where the defect was recorded |
+| `inspection_id` | Inspection where the defect was identified |
 | `defect_type_id` | Standardized defect classification |
-| `defect_quantity` | Number of units affected |
-| `disposition` | Final decision for affected units |
-| `root_cause_category` | Suspected or confirmed root cause |
-| `corrective_action` | Action taken to prevent recurrence |
+| `defect_quantity` | Number of units affected by the defect |
+| `disposition` | Scrap, Rework, Use As Is, Return to Supplier, or Pending Review |
+| `root_cause_category` | Suspected or confirmed root cause category |
+| `corrective_action` | Corrective action taken or recommended |
+
+Each inspection may identify multiple defect types. Each defect record references a standardized defect classification stored in the `defect_types` table.
 
 Possible dispositions include:
 
@@ -476,21 +483,23 @@ Possible root-cause categories include:
 
 ### `downtime_events`
 
-Stores machine stoppages and production interruptions.
+Stores machine downtime events and production interruptions.
 
-**Table grain:** One row per continuous downtime incident.
+**Table grain:** One row per continuous downtime event for one machine.
 
 | Column | Description |
 |---|---|
 | `downtime_event_id` | Unique downtime-event identifier |
-| `machine_id` | Machine affected |
+| `machine_id` | Machine affected by the downtime |
 | `production_run_id` | Production run affected, when applicable |
 | `downtime_start` | Downtime start timestamp |
 | `downtime_end` | Downtime end timestamp |
-| `downtime_minutes` | Total downtime duration |
+| `downtime_minutes` | Total downtime duration in minutes |
 | `downtime_category` | Standardized downtime category |
-| `downtime_reason` | Detailed downtime explanation |
+| `downtime_reason` | Detailed explanation of the downtime |
 | `planned_flag` | Indicates whether the downtime was planned |
+
+Every downtime event is associated with a machine. Some downtime events occur during active production runs, while others occur outside production activities, such as preventive maintenance or equipment setup.
 
 Example downtime categories include:
 
@@ -508,46 +517,49 @@ Example downtime categories include:
 
 ### `maintenance_events`
 
-Stores preventive and corrective maintenance performed on machines.
+Stores maintenance activities performed on manufacturing equipment.
 
-**Table grain:** One row per maintenance action.
+**Table grain:** One row per maintenance event performed on one machine.
 
 | Column | Description |
 |---|---|
 | `maintenance_event_id` | Unique maintenance-event identifier |
 | `machine_id` | Machine receiving maintenance |
-| `maintenance_type` | Preventive, corrective, predictive, calibration, or inspection |
-| `reported_time` | Time the problem or service need was reported |
+| `maintenance_type` | Preventive, Corrective, Predictive, Calibration, or Inspection |
+| `reported_timestamp` | Timestamp when maintenance was reported or scheduled |
 | `maintenance_start` | Maintenance start timestamp |
 | `maintenance_end` | Maintenance completion timestamp |
-| `technician` | Fictional or anonymized technician |
-| `failure_component` | Component associated with the service |
-| `maintenance_action` | Work performed |
+| `technician` | Technician performing the maintenance |
+| `failure_component` | Machine component serviced or repaired |
+| `maintenance_action` | Description of the maintenance work performed |
 | `maintenance_cost` | Estimated maintenance cost |
-| `machine_hours_at_service` | Machine operating hours at service time |
+| `machine_hours_at_service` | Machine operating hours when maintenance occurred |
+
+Each maintenance event represents a single maintenance activity performed on one machine. Maintenance events are modeled separately from downtime events because maintenance may occur during or outside production.
 
 ---
 
 ### `sensor_readings`
 
-Stores time-series machine telemetry.
+Stores time-series telemetry collected from manufacturing equipment.
 
 **Table grain:** One row per machine per sensor-reading timestamp.
 
 | Column | Description |
 |---|---|
 | `sensor_reading_id` | Unique sensor-reading identifier |
-| `machine_id` | Machine producing the reading |
-| `reading_timestamp` | Timestamp of the reading |
-| `temperature_c` | Machine temperature in Celsius |
-| `vibration_mm_s` | Vibration velocity |
-| `power_kw` | Electrical power consumption |
-| `pressure_psi` | Operating or hydraulic pressure |
-| `rpm` | Rotational speed |
+| `machine_id` | Machine producing the sensor reading |
+| `reading_timestamp` | Timestamp when the readings were captured |
+| `temperature_c` | Machine temperature in degrees Celsius |
+| `vibration_mm_s` | Vibration velocity in millimeters per second |
+| `power_kw` | Electrical power consumption in kilowatts |
+| `pressure_psi` | Hydraulic or pneumatic pressure in PSI |
+| `rpm` | Machine rotational speed |
+| `created_at` | Record creation timestamp |
 
-Sensor readings will initially be generated at five-minute intervals.
+Sensor readings are collected periodically for each machine. Not every sensor applies to every machine type, so non-applicable measurements may be stored as NULL values.
 
-Not every sensor value will apply to every machine type. Non-applicable measurements may be stored as null values.
+To prevent duplicate telemetry, each machine may have only one sensor reading for a given timestamp.
 
 ---
 
@@ -777,9 +789,9 @@ The initial model uses the following assumptions:
 6. A production order may contain multiple production runs.
 7. Each production run represents one manufacturing operation on one machine.
 8. A production run has one primary operator.
-9. A production order may consume multiple material lots.
-10. One material lot may be consumed across multiple production orders.
-11. Quality inspections are linked to production runs.
+9. A production order may be allocated material from multiple supplier material lots.
+10. A supplier material lot may be allocated across multiple production orders.
+11. Each production order and material lot combination is stored once in the production_order_materials bridge table.
 12. One inspection may identify multiple defect types.
 13. Downtime may occur during a production run or outside an active production run.
 14. Maintenance events are recorded separately from downtime events.

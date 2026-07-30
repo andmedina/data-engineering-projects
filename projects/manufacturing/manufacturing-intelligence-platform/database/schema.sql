@@ -813,4 +813,466 @@ CREATE INDEX idx_production_order_materials_material_lot
     ON production_order_materials (material_lot_id);
 
 
+-- ============================================================================
+-- production_runs
+--
+-- Purpose:
+--     Stores the execution of individual manufacturing operations performed
+--     as part of a production order.
+--
+-- Grain:
+--     One row per continuous execution of a single manufacturing operation
+--     for one production order on one machine.
+-- ============================================================================
 
+CREATE TABLE production_runs (
+
+    production_run_id BIGINT GENERATED ALWAYS AS IDENTITY,
+
+    production_order_id BIGINT NOT NULL,
+
+    machine_id BIGINT NOT NULL,
+
+    operator_id BIGINT NOT NULL,
+
+    operation_sequence SMALLINT NOT NULL,
+
+    operation_type VARCHAR(50) NOT NULL,
+
+    start_timestamp TIMESTAMPTZ,
+
+    end_timestamp TIMESTAMPTZ,
+
+    planned_cycle_time_seconds NUMERIC(8,2),
+
+    actual_cycle_time_seconds NUMERIC(8,2),
+
+    input_quantity INTEGER NOT NULL,
+
+    good_quantity INTEGER NOT NULL DEFAULT 0,
+
+    scrap_quantity INTEGER NOT NULL DEFAULT 0,
+
+    rework_quantity INTEGER NOT NULL DEFAULT 0,
+
+    run_status VARCHAR(25) NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_production_runs
+        PRIMARY KEY (production_run_id),
+
+    CONSTRAINT fk_production_runs_production_orders
+        FOREIGN KEY (production_order_id)
+        REFERENCES production_orders (production_order_id),
+
+    CONSTRAINT fk_production_runs_machines
+        FOREIGN KEY (machine_id)
+        REFERENCES machines (machine_id),
+
+    CONSTRAINT fk_production_runs_operators
+        FOREIGN KEY (operator_id)
+        REFERENCES operators (operator_id),
+
+    CONSTRAINT chk_production_runs_operation_sequence
+        CHECK (operation_sequence > 0),
+
+    CONSTRAINT chk_production_runs_cycle_times
+        CHECK (
+            planned_cycle_time_seconds IS NULL
+            OR planned_cycle_time_seconds > 0
+        ),
+
+    CONSTRAINT chk_production_runs_actual_cycle_time
+        CHECK (
+            actual_cycle_time_seconds IS NULL
+            OR actual_cycle_time_seconds > 0
+        ),
+
+    CONSTRAINT chk_production_runs_input_quantity
+        CHECK (input_quantity >= 0),
+
+    CONSTRAINT chk_production_runs_good_quantity
+        CHECK (good_quantity >= 0),
+
+    CONSTRAINT chk_production_runs_scrap_quantity
+        CHECK (scrap_quantity >= 0),
+
+    CONSTRAINT chk_production_runs_rework_quantity
+        CHECK (rework_quantity >= 0),
+
+    CONSTRAINT chk_production_runs_quantity_balance
+        CHECK (
+            input_quantity =
+            good_quantity +
+            scrap_quantity +
+            rework_quantity
+        ),
+
+    CONSTRAINT chk_production_runs_timestamps
+        CHECK (
+            end_timestamp IS NULL
+            OR start_timestamp IS NULL
+            OR end_timestamp >= start_timestamp
+        ),
+
+    CONSTRAINT chk_production_runs_status
+        CHECK (
+            run_status IN (
+                'Planned',
+                'Running',
+                'Completed',
+                'Interrupted',
+                'Cancelled'
+            )
+        )
+
+);
+
+CREATE INDEX idx_production_runs_production_order_id
+    ON production_runs (production_order_id);
+
+CREATE INDEX idx_production_runs_machine_id
+    ON production_runs (machine_id);
+
+CREATE INDEX idx_production_runs_operator_id
+    ON production_runs (operator_id);
+
+CREATE INDEX idx_production_runs_operation_type
+    ON production_runs (operation_type);
+
+CREATE INDEX idx_production_runs_start_timestamp
+    ON production_runs (start_timestamp);
+
+-- ============================================================================
+-- quality_inspections
+--
+-- Purpose:
+--     Stores inspections performed during or after a manufacturing operation.
+--
+-- Grain:
+--     One row per inspection event performed for one production run.
+-- ============================================================================
+
+CREATE TABLE quality_inspections (
+
+    inspection_id BIGINT GENERATED ALWAYS AS IDENTITY,
+
+    production_run_id BIGINT NOT NULL,
+
+    inspector_id BIGINT NOT NULL,
+
+    inspection_timestamp TIMESTAMPTZ NOT NULL,
+
+    sample_size INTEGER NOT NULL,
+
+    passed_quantity INTEGER NOT NULL DEFAULT 0,
+
+    failed_quantity INTEGER NOT NULL DEFAULT 0,
+
+    inspection_result VARCHAR(20) NOT NULL,
+
+    measurement_type VARCHAR(50) NOT NULL,
+
+    measured_value NUMERIC(10,4),
+
+    lower_spec_limit NUMERIC(10,4),
+
+    upper_spec_limit NUMERIC(10,4),
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_quality_inspections
+        PRIMARY KEY (inspection_id),
+
+    CONSTRAINT fk_quality_inspections_production_runs
+        FOREIGN KEY (production_run_id)
+        REFERENCES production_runs (production_run_id),
+
+    CONSTRAINT fk_quality_inspections_operators
+        FOREIGN KEY (inspector_id)
+        REFERENCES operators (operator_id),
+
+    CONSTRAINT chk_quality_inspections_sample_size
+        CHECK (sample_size >= 0),
+
+    CONSTRAINT chk_quality_inspections_passed_quantity
+        CHECK (passed_quantity >= 0),
+
+    CONSTRAINT chk_quality_inspections_failed_quantity
+        CHECK (failed_quantity >= 0),
+
+    CONSTRAINT chk_quality_inspections_quantity_balance
+        CHECK (
+            sample_size =
+            passed_quantity +
+            failed_quantity
+        ),
+
+    CONSTRAINT chk_quality_inspections_spec_limits
+        CHECK (
+            lower_spec_limit IS NULL
+            OR upper_spec_limit IS NULL
+            OR upper_spec_limit >= lower_spec_limit
+        ),
+
+    CONSTRAINT chk_quality_inspections_result
+        CHECK (
+            inspection_result IN (
+                'Pass',
+                'Fail',
+                'Conditional',
+                'Pending'
+            )
+        )
+
+);
+
+CREATE INDEX idx_quality_inspections_production_run_id
+    ON quality_inspections (production_run_id);
+
+CREATE INDEX idx_quality_inspections_inspector_id
+    ON quality_inspections (inspector_id);
+
+CREATE INDEX idx_quality_inspections_timestamp
+    ON quality_inspections (inspection_timestamp);
+
+CREATE INDEX idx_quality_inspections_measurement_type
+    ON quality_inspections (measurement_type);
+
+-- ============================================================================
+-- quality_defects
+--
+-- Purpose:
+--     Stores defect types identified during a quality inspection.
+--
+-- Grain:
+--     One row per defect type identified during one quality inspection.
+-- ============================================================================
+
+CREATE TABLE quality_defects (
+
+    quality_defect_id BIGINT GENERATED ALWAYS AS IDENTITY,
+
+    inspection_id BIGINT NOT NULL,
+
+    defect_type_id BIGINT NOT NULL,
+
+    defect_quantity INTEGER NOT NULL,
+
+    disposition VARCHAR(30) NOT NULL,
+
+    root_cause_category VARCHAR(30) NOT NULL,
+
+    corrective_action TEXT,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_quality_defects
+        PRIMARY KEY (quality_defect_id),
+
+    CONSTRAINT fk_quality_defects_quality_inspections
+        FOREIGN KEY (inspection_id)
+        REFERENCES quality_inspections (inspection_id),
+
+    CONSTRAINT fk_quality_defects_defect_types
+        FOREIGN KEY (defect_type_id)
+        REFERENCES defect_types (defect_type_id),
+
+    CONSTRAINT chk_quality_defects_quantity
+        CHECK (defect_quantity >= 0),
+
+    CONSTRAINT chk_quality_defects_disposition
+        CHECK (
+            disposition IN (
+                'Scrap',
+                'Rework',
+                'Use As Is',
+                'Return to Supplier',
+                'Pending Review'
+            )
+        ),
+
+    CONSTRAINT chk_quality_defects_root_cause
+        CHECK (
+            root_cause_category IN (
+                'Machine',
+                'Material',
+                'Method',
+                'Measurement',
+                'Operator',
+                'Environment',
+                'Unknown'
+            )
+        )
+
+);
+
+CREATE INDEX idx_quality_defects_inspection_id
+    ON quality_defects (inspection_id);
+
+CREATE INDEX idx_quality_defects_defect_type_id
+    ON quality_defects (defect_type_id);
+
+CREATE INDEX idx_quality_defects_root_cause_category
+    ON quality_defects (root_cause_category);
+
+-- ============================================================================
+-- downtime_events
+--
+-- Purpose:
+--     Stores machine downtime events and production interruptions.
+--
+-- Grain:
+--     One row per continuous downtime event for one machine.
+-- ============================================================================
+
+CREATE TABLE downtime_events (
+
+    downtime_event_id BIGINT GENERATED ALWAYS AS IDENTITY,
+
+    machine_id BIGINT NOT NULL,
+
+    production_run_id BIGINT,
+
+    downtime_start TIMESTAMPTZ NOT NULL,
+
+    downtime_end TIMESTAMPTZ NOT NULL,
+
+    downtime_minutes INTEGER NOT NULL,
+
+    downtime_category VARCHAR(50) NOT NULL,
+
+    downtime_reason TEXT,
+
+    planned_flag BOOLEAN NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_downtime_events
+        PRIMARY KEY (downtime_event_id),
+
+    CONSTRAINT fk_downtime_events_machines
+        FOREIGN KEY (machine_id)
+        REFERENCES machines (machine_id),
+
+    CONSTRAINT fk_downtime_events_production_runs
+        FOREIGN KEY (production_run_id)
+        REFERENCES production_runs (production_run_id),
+
+    CONSTRAINT chk_downtime_events_minutes
+        CHECK (downtime_minutes >= 0),
+
+    CONSTRAINT chk_downtime_events_timestamps
+        CHECK (downtime_end >= downtime_start),
+
+    CONSTRAINT chk_downtime_events_category
+        CHECK (
+            downtime_category IN (
+                'Mechanical Failure',
+                'Tool Change',
+                'Setup',
+                'Material Shortage',
+                'Quality Hold',
+                'Preventive Maintenance',
+                'Operator Unavailable',
+                'Changeover',
+                'Power Interruption'
+            )
+        )
+
+);
+
+CREATE INDEX idx_downtime_events_machine_id
+    ON downtime_events (machine_id);
+
+CREATE INDEX idx_downtime_events_production_run_id
+    ON downtime_events (production_run_id);
+
+CREATE INDEX idx_downtime_events_start
+    ON downtime_events (downtime_start);
+
+CREATE INDEX idx_downtime_events_category
+    ON downtime_events (downtime_category);
+
+-- ============================================================================
+-- maintenance_events
+--
+-- Purpose:
+--     Stores maintenance activities performed on manufacturing equipment.
+--
+-- Grain:
+--     One row per maintenance event performed on one machine.
+-- ============================================================================
+
+CREATE TABLE maintenance_events (
+
+    maintenance_event_id BIGINT GENERATED ALWAYS AS IDENTITY,
+
+    machine_id BIGINT NOT NULL,
+
+    maintenance_type VARCHAR(30) NOT NULL,
+
+    reported_timestamp TIMESTAMPTZ NOT NULL,
+
+    maintenance_start TIMESTAMPTZ NOT NULL,
+
+    maintenance_end TIMESTAMPTZ NOT NULL,
+
+    technician VARCHAR(100) NOT NULL,
+
+    failure_component VARCHAR(100),
+
+    maintenance_action TEXT,
+
+    maintenance_cost NUMERIC(10,2),
+
+    machine_hours_at_service NUMERIC(10,2),
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_maintenance_events
+        PRIMARY KEY (maintenance_event_id),
+
+    CONSTRAINT fk_maintenance_events_machines
+        FOREIGN KEY (machine_id)
+        REFERENCES machines (machine_id),
+
+    CONSTRAINT chk_maintenance_events_type
+        CHECK (
+            maintenance_type IN (
+                'Preventive',
+                'Corrective',
+                'Predictive',
+                'Calibration',
+                'Inspection'
+            )
+        ),
+
+    CONSTRAINT chk_maintenance_events_timestamps
+        CHECK (
+            maintenance_end >= maintenance_start
+        ),
+
+    CONSTRAINT chk_maintenance_events_cost
+        CHECK (
+            maintenance_cost IS NULL
+            OR maintenance_cost >= 0
+        ),
+
+    CONSTRAINT chk_maintenance_events_machine_hours
+        CHECK (
+            machine_hours_at_service IS NULL
+            OR machine_hours_at_service >= 0
+        )
+
+);
+
+CREATE INDEX idx_maintenance_events_machine_id
+    ON maintenance_events (machine_id);
+
+CREATE INDEX idx_maintenance_events_type
+    ON maintenance_events (maintenance_type);
+
+CREATE INDEX idx_maintenance_events_start
+    ON maintenance_events (maintenance_start);
