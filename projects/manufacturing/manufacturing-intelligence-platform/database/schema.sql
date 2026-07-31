@@ -1276,3 +1276,82 @@ CREATE INDEX idx_maintenance_events_type
 
 CREATE INDEX idx_maintenance_events_start
     ON maintenance_events (maintenance_start);
+
+-- ============================================================================
+-- sensor_readings
+--
+-- Purpose:
+--     Stores time-series telemetry collected from manufacturing equipment.
+--
+-- Grain:
+--     One row per machine per sensor-reading timestamp.
+-- ============================================================================
+
+CREATE TABLE sensor_readings (
+
+    sensor_reading_id BIGINT GENERATED ALWAYS AS IDENTITY,
+
+    machine_id BIGINT NOT NULL,
+
+    reading_timestamp TIMESTAMPTZ NOT NULL,
+
+    temperature_c NUMERIC(6,2),
+
+    vibration_mm_s NUMERIC(8,3),
+
+    power_kw NUMERIC(8,2),
+
+    pressure_psi NUMERIC(8,2),
+
+    rpm INTEGER,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_sensor_readings
+        PRIMARY KEY (sensor_reading_id),
+
+    CONSTRAINT uq_sensor_readings_machine_timestamp
+        UNIQUE (machine_id, reading_timestamp),
+
+    CONSTRAINT fk_sensor_readings_machines
+        FOREIGN KEY (machine_id)
+        REFERENCES machines (machine_id),
+
+    CONSTRAINT chk_sensor_readings_temperature
+        CHECK (
+            temperature_c IS NULL
+            OR temperature_c >= -273.15
+        ),
+
+    CONSTRAINT chk_sensor_readings_vibration
+        CHECK (
+            vibration_mm_s IS NULL
+            OR vibration_mm_s >= 0
+        ),
+
+    CONSTRAINT chk_sensor_readings_power
+        CHECK (
+            power_kw IS NULL
+            OR power_kw >= 0
+        ),
+
+    CONSTRAINT chk_sensor_readings_pressure
+        CHECK (
+            pressure_psi IS NULL
+            OR pressure_psi >= 0
+        ),
+
+    CONSTRAINT chk_sensor_readings_rpm
+        CHECK (
+            rpm IS NULL
+            OR rpm >= 0
+        )
+
+);
+
+CREATE INDEX idx_sensor_readings_machine_id
+    ON sensor_readings (machine_id);
+
+CREATE INDEX idx_sensor_readings_timestamp
+    ON sensor_readings (reading_timestamp);
+
