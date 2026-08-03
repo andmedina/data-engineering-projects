@@ -179,6 +179,8 @@ and predicts mechanical-failure risk within the next 60 minutes. See
 [`docs/ml_predictive_maintenance.md`](docs/ml_predictive_maintenance.md) for
 the population, features, target, evaluation design, and limitations.
 
+![Predictive maintenance model results](docs/images/predictive_maintenance_results.png)
+
 ---
 
 # Project Roadmap

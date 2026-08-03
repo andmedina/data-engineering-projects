@@ -1,4 +1,5 @@
 Faker
+matplotlib
 pandas
 psycopg2-binary
 pytest
