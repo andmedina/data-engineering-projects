@@ -45,6 +45,7 @@ from src.etl.generate_maintenance_events import (
 from src.etl.generate_sensor_readings import (
     generate_sensor_readings,
     generate_sensor_value,
+    get_failure_multipliers,
 )
 
 
@@ -463,6 +464,21 @@ def test_maintenance_event_has_valid_cost_and_timestamps():
 
 def test_non_applicable_sensor_returns_null():
     assert generate_sensor_value(None, operating=True) is None
+
+
+def test_cold_heading_failure_signatures_match_failed_component():
+    die_signature = get_failure_multipliers("Cold Heading", "Forming Die")
+    hydraulic_signature = get_failure_multipliers(
+        "Cold Heading", "Hydraulic System"
+    )
+    feed_signature = get_failure_multipliers("Cold Heading", "Feed System")
+
+    assert die_signature["vibration"] > 1
+    assert die_signature["power"] > 1
+    assert hydraulic_signature["pressure"] < 1
+    assert hydraulic_signature["temperature"] > 1
+    assert feed_signature["rpm"] < 1
+    assert feed_signature["vibration"] > 1
 
 
 def test_sensor_readings_have_unique_machine_timestamps():

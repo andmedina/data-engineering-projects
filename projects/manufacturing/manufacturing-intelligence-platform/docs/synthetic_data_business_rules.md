@@ -465,8 +465,13 @@ run.
 
 ### Telemetry Window and Frequency
 
-- Generate a recent 30-day telemetry window ending on the current date.
+- Generate 12 months of telemetry for the two Cold Heading machines used by
+  the predictive-maintenance proof of concept.
+- Retain a recent 30-day telemetry window for all other active or idle
+  machines.
 - Generate one reading every five minutes for every active or idle machine.
+- End telemetry at the latest completed five-minute interval so future sensor
+  readings are never created.
 - Require each machine and timestamp combination to be unique.
 - Load readings into PostgreSQL in batches of 5,000 rows.
 
@@ -489,11 +494,24 @@ run.
 - Inspection equipment records ambient temperature and power only.
 - Require every recorded sensor value to be nonnegative.
 
+### Cold-Heading Failure Signatures
+
+- Link a Mechanical Failure to the failed component recorded by its corrective
+  maintenance event.
+- Simulate forming-die deterioration with higher vibration and power plus a
+  moderate temperature increase.
+- Simulate hydraulic-system deterioration with lower pressure plus higher
+  temperature and power.
+- Simulate feed-system deterioration with lower RPM and power plus higher
+  vibration.
+- Apply these component signatures only during the 60 minutes preceding a
+  Mechanical Failure and only while the machine is operating.
+
 ### Anomaly Rules
 
-- Elevate temperature, vibration, and power during the hour before a recorded
-  Mechanical Failure.
-- Reduce pressure and RPM during the same pre-failure window.
+- Use the component-specific signatures above for Cold Heading machines.
+- For other machine families, use a generic pre-failure signature with higher
+  temperature, vibration, and power plus lower pressure and RPM.
 - Add a 0.2% background-anomaly probability outside known failures.
 - Preserve downtime behavior over anomaly behavior when a machine is stopped.
 

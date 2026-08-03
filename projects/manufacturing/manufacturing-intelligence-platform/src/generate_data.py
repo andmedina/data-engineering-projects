@@ -685,14 +685,19 @@ def get_recent_downtime_events(engine, start_timestamp, end_timestamp):
     query = text(
         """
         SELECT
-            machine_id,
-            downtime_start,
-            downtime_end,
-            downtime_category
-        FROM downtime_events
-        WHERE downtime_end >= :start_timestamp
-          AND downtime_start <= :end_timestamp
-        ORDER BY machine_id, downtime_start
+            d.machine_id,
+            d.downtime_start,
+            d.downtime_end,
+            d.downtime_category,
+            me.failure_component
+        FROM downtime_events d
+        LEFT JOIN maintenance_events me
+            ON me.machine_id = d.machine_id
+           AND me.maintenance_type = 'Corrective'
+           AND me.maintenance_start = d.downtime_start
+        WHERE d.downtime_end >= :start_timestamp
+          AND d.downtime_start <= :end_timestamp
+        ORDER BY d.machine_id, d.downtime_start
         """
     )
 
@@ -1022,24 +1027,43 @@ def main():
     existing_sensor_count = get_sensor_reading_count(engine)
 
     if existing_sensor_count == 0:
-        end_timestamp = datetime.combine(
-            date.today(),
-            time(hour=23, minute=55),
-            tzinfo=timezone.utc,
+        current_timestamp = datetime.now(timezone.utc)
+        end_timestamp = current_timestamp.replace(
+            minute=(current_timestamp.minute // 5) * 5,
+            second=0,
+            microsecond=0,
         )
-        start_timestamp = end_timestamp - timedelta(days=30)
         machines = get_machines_for_sensor_readings(engine)
+        cold_heading_machines = [
+            machine
+            for machine in machines
+            if machine["operation_type"] == "Cold Heading"
+        ]
+        other_machines = [
+            machine
+            for machine in machines
+            if machine["operation_type"] != "Cold Heading"
+        ]
+        cold_heading_start = end_timestamp - timedelta(days=365)
+        other_machine_start = end_timestamp - timedelta(days=30)
         downtime_events = get_recent_downtime_events(
             engine,
-            start_timestamp,
+            cold_heading_start,
             end_timestamp,
         )
-        sensor_readings = generate_sensor_readings(
-            machines=machines,
+        cold_heading_readings = generate_sensor_readings(
+            machines=cold_heading_machines,
             downtime_events=downtime_events,
-            start_timestamp=start_timestamp,
+            start_timestamp=cold_heading_start,
             end_timestamp=end_timestamp,
         )
+        other_machine_readings = generate_sensor_readings(
+            machines=other_machines,
+            downtime_events=downtime_events,
+            start_timestamp=other_machine_start,
+            end_timestamp=end_timestamp,
+        )
+        sensor_readings = cold_heading_readings + other_machine_readings
 
         print(f"Generated {len(sensor_readings)} sensor readings.")
 

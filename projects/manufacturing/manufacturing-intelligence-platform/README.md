@@ -174,6 +174,11 @@ limitations.
 - Scikit-learn
 - Predictive Analytics
 
+The predictive-maintenance proof of concept focuses on cold-heading machines
+and predicts mechanical-failure risk within the next 60 minutes. See
+[`docs/ml_predictive_maintenance.md`](docs/ml_predictive_maintenance.md) for
+the population, features, target, evaluation design, and limitations.
+
 ---
 
 # Project Roadmap
@@ -202,11 +207,11 @@ limitations.
 
 - [x] Manufacturing KPIs
 - [ ] Root Cause Analysis
-- [ ] Executive Dashboard
+- [x] Executive Dashboard
 
 ## Phase 5 — Machine Learning
 
-- [ ] Predictive maintenance
+- [x] Predictive maintenance proof of concept
 - [ ] Defect prediction
 - [ ] Downtime forecasting
 

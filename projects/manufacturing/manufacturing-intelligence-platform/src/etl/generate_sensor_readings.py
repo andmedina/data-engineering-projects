@@ -63,6 +63,38 @@ SENSOR_PROFILES = {
     },
 }
 
+COLD_HEADING_FAILURE_MULTIPLIERS = {
+    "Forming Die": {
+        "temperature": 1.08,
+        "vibration": 2.80,
+        "power": 1.30,
+        "pressure": 1.00,
+        "rpm": 0.95,
+    },
+    "Hydraulic System": {
+        "temperature": 1.15,
+        "vibration": 1.30,
+        "power": 1.15,
+        "pressure": 0.65,
+        "rpm": 0.90,
+    },
+    "Feed System": {
+        "temperature": 1.05,
+        "vibration": 2.00,
+        "power": 0.85,
+        "pressure": 1.00,
+        "rpm": 0.55,
+    },
+}
+
+GENERIC_FAILURE_MULTIPLIERS = {
+    "temperature": 1.15,
+    "vibration": 2.50,
+    "power": 1.20,
+    "pressure": 0.75,
+    "rpm": 0.85,
+}
+
 
 def is_operating(timestamp, machine_status):
     """Return whether a machine is likely operating at a timestamp."""
@@ -93,6 +125,17 @@ def generate_sensor_value(value_ranges, operating, multiplier=1.0, places=2):
     return Decimal(str(value)).quantize(quantum, rounding=ROUND_HALF_UP)
 
 
+def get_failure_multipliers(operation_type, failure_component):
+    """Return the sensor signature for an upcoming mechanical failure."""
+    if operation_type == "Cold Heading":
+        return COLD_HEADING_FAILURE_MULTIPLIERS.get(
+            failure_component,
+            GENERIC_FAILURE_MULTIPLIERS,
+        )
+
+    return GENERIC_FAILURE_MULTIPLIERS
+
+
 def generate_sensor_readings(
     machines,
     downtime_events,
@@ -115,7 +158,10 @@ def generate_sensor_readings(
 
         if downtime_event["downtime_category"] == "Mechanical Failure":
             failures_by_machine[downtime_event["machine_id"]].append(
-                downtime_event["downtime_start"]
+                (
+                    downtime_event["downtime_start"],
+                    downtime_event.get("failure_component"),
+                )
             )
 
     readings = []
@@ -132,12 +178,18 @@ def generate_sensor_readings(
                 for downtime_start, downtime_end
                 in downtime_by_machine[machine_id]
             )
-            before_failure = any(
-                failure_start - timedelta(minutes=60)
-                <= reading_timestamp
-                < failure_start
-                for failure_start in failures_by_machine[machine_id]
+            upcoming_failure = next(
+                (
+                    (failure_start, failure_component)
+                    for failure_start, failure_component
+                    in failures_by_machine[machine_id]
+                    if failure_start - timedelta(minutes=60)
+                    <= reading_timestamp
+                    < failure_start
+                ),
+                None,
             )
+            before_failure = upcoming_failure is not None
             background_anomaly = random.random() < 0.002
             anomaly = before_failure or background_anomaly
             operating = (
@@ -145,16 +197,29 @@ def generate_sensor_readings(
                 and not in_downtime
             )
 
-            temperature_multiplier = 1.15 if anomaly and operating else 1.0
-            vibration_multiplier = 2.50 if anomaly and operating else 1.0
-            power_multiplier = 1.20 if anomaly and operating else 1.0
-            pressure_multiplier = 0.75 if anomaly and operating else 1.0
-            rpm_multiplier = 0.85 if anomaly and operating else 1.0
+            if before_failure:
+                failure_multipliers = get_failure_multipliers(
+                    machine["operation_type"],
+                    upcoming_failure[1],
+                )
+            elif background_anomaly:
+                failure_multipliers = GENERIC_FAILURE_MULTIPLIERS
+            else:
+                failure_multipliers = {
+                    sensor_name: 1.0
+                    for sensor_name in GENERIC_FAILURE_MULTIPLIERS
+                }
+
+            if not anomaly or not operating:
+                failure_multipliers = {
+                    sensor_name: 1.0
+                    for sensor_name in GENERIC_FAILURE_MULTIPLIERS
+                }
 
             rpm_value = generate_sensor_value(
                 profile["rpm"],
                 operating,
-                multiplier=rpm_multiplier,
+                multiplier=failure_multipliers["rpm"],
                 places=0,
             )
 
@@ -165,25 +230,25 @@ def generate_sensor_readings(
                     "temperature_c": generate_sensor_value(
                         profile["temperature"],
                         operating,
-                        multiplier=temperature_multiplier,
+                        multiplier=failure_multipliers["temperature"],
                         places=2,
                     ),
                     "vibration_mm_s": generate_sensor_value(
                         profile["vibration"],
                         operating,
-                        multiplier=vibration_multiplier,
+                        multiplier=failure_multipliers["vibration"],
                         places=3,
                     ),
                     "power_kw": generate_sensor_value(
                         profile["power"],
                         operating,
-                        multiplier=power_multiplier,
+                        multiplier=failure_multipliers["power"],
                         places=2,
                     ),
                     "pressure_psi": generate_sensor_value(
                         profile["pressure"],
                         operating,
-                        multiplier=pressure_multiplier,
+                        multiplier=failure_multipliers["pressure"],
                         places=2,
                     ),
                     "rpm": int(rpm_value) if rpm_value is not None else None,
