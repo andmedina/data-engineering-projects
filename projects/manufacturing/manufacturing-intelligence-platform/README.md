@@ -1,6 +1,6 @@
 # Manufacturing Intelligence Platform
 
-> 🚧 **Status:** In Development
+> **Status:** Complete portfolio implementation
 
 ## Overview
 
@@ -34,7 +34,7 @@ Although each system provides valuable information independently, these data sou
 - Which production lines consistently achieve the highest first-pass yield?
 - Are equipment failures preceded by abnormal sensor readings?
 - Which suppliers are associated with higher defect rates?
-- What operational factors have the greatest impact on Overall Equipment Effectiveness (OEE)?
+- Which additional scheduling data would be required to calculate defensible Overall Equipment Effectiveness (OEE)?
 
 This project simulates the role of a Manufacturing Data Scientist responsible for designing a unified analytics platform that consolidates these operational systems into a centralized environment for reporting, root cause analysis, and predictive analytics.
 
@@ -120,21 +120,24 @@ PostgreSQL Data Warehouse
         └──────────────► Machine Learning Models
 ```
 
+See [`docs/architecture.md`](docs/architecture.md) for the component design,
+source-system mappings, data flow, validation layers, and scope boundaries.
+
 ---
 
-# Manufacturing KPIs
+# Manufacturing Analytics
 
-The platform will calculate and monitor operational metrics including:
+The implemented analytics layer reports:
 
-- Overall Equipment Effectiveness (OEE)
-- First Pass Yield (FPY)
-- Scrap Rate
-- Downtime
-- Cycle Time
-- Throughput
-- Capacity Utilization
-- Defect Rate
-- Inventory Accuracy
+- First-pass yield (FPY)
+- Scrap and rework rates
+- Inspection pass rate
+- Total and unplanned downtime
+- Machine and product-family performance
+- Average production cycle time
+- Defect concentrations by machine, category, and severity
+- Downtime causes by frequency and duration
+- Monthly quality and downtime trends
 
 Run the manufacturing analytics report:
 
@@ -151,6 +154,10 @@ python -m src.analytics.export_dashboard_data
 See [`docs/analytics_kpi_guide.md`](docs/analytics_kpi_guide.md) for each
 report's business questions, source tables, join path, grain, formulas, and
 limitations.
+
+True OEE is deliberately excluded because the current schema does not contain
+planned production time at the machine-and-shift grain. The analytics guide
+documents the missing data rather than presenting a misleading approximation.
 
 ---
 
@@ -183,6 +190,66 @@ the population, features, target, evaluation design, and limitations.
 
 ---
 
+# Reproduce the Project
+
+## Prerequisites
+
+- Python 3.11 or a compatible recent Python version
+- PostgreSQL
+- Conda or another Python environment manager
+- Tableau is optional and needed only to edit the packaged workbook
+
+From the project directory, create and activate an environment:
+
+```bash
+conda create -n data_engineering python=3.11
+conda activate data_engineering
+pip install -r requirements.txt
+```
+
+Create and populate the PostgreSQL database:
+
+```bash
+createdb manufacturing_intelligence
+psql -d manufacturing_intelligence -f database/schema.sql
+psql -d manufacturing_intelligence -f database/seed.sql
+python -m src.generate_data
+```
+
+The default connection uses the current operating-system user. For a different
+PostgreSQL connection, set `DATABASE_URL` before running Python:
+
+```bash
+export DATABASE_URL="postgresql+psycopg2://user:password@localhost/manufacturing_intelligence"
+```
+
+`database/schema.sql` drops and recreates all project tables, so it is the
+explicit clean-reset command. The transactional loaders otherwise skip tables
+that already contain data.
+
+## Demonstration Commands
+
+Run these commands from the repository root:
+
+```bash
+# Validate Python business logic and calculations
+python -m pytest -q
+
+# Display manufacturing KPIs and detailed analyses
+python -m src.analytics.kpis
+
+# Recreate the six Tableau-ready CSV extracts
+python -m src.analytics.export_dashboard_data
+
+# Compare three models and evaluate the selected model
+python -m src.models.train_predictive_maintenance
+
+# Recreate the portfolio ML results image from the recorded experiment
+python -m src.models.create_ml_results_report
+```
+
+---
+
 # Project Roadmap
 
 ## Phase 1 — Data Architecture
@@ -208,22 +275,21 @@ the population, features, target, evaluation design, and limitations.
 ## Phase 4 — Analytics
 
 - [x] Manufacturing KPIs
-- [ ] Root Cause Analysis
+- [x] Downtime and quality-defect cause analysis
 - [x] Executive Dashboard
 
 ## Phase 5 — Machine Learning
 
 - [x] Predictive maintenance proof of concept
-- [ ] Defect prediction
-- [ ] Downtime forecasting
 
 ## Future Enhancements
 
+- Machine-and-shift schedules for true OEE and capacity utilization
+- Model serving, drift monitoring, and automated retraining
+- Defect prediction and downtime forecasting
+- Production orchestration with a tool such as dbt and a workflow scheduler
 - AI-powered manufacturing assistant using Large Language Models (LLMs)
-- Natural language querying of manufacturing data
-- Predictive production recommendations
 - Real-time streaming data integration
-- Interactive manufacturing copilot
 
 ---
 
@@ -231,13 +297,19 @@ the population, features, target, evaluation design, and limitations.
 
 ```
 manufacturing-intelligence-platform/
-├── data/
-├── database/
-├── docs/
-├── notebooks/
+├── database/              # PostgreSQL schema and master-data seed
+├── docs/                  # Architecture, data model, rules, and guides
+├── outputs/analytics/     # Reproducible dashboard CSV extracts (Git-ignored)
 ├── src/
-├── dashboard/
-└── tests/
+│   ├── analytics/         # KPI queries, reports, and exports
+│   ├── etl/               # Transaction generators and loaders
+│   ├── models/            # ML preparation, training, and result reporting
+│   ├── config.py          # Shared database configuration
+│   └── generate_data.py   # Transactional ETL entry point
+├── tableau/               # Packaged executive dashboard
+├── tests/                 # Automated data-quality, KPI, and ML tests
+├── requirements.txt
+└── README.md
 ```
 
 ---

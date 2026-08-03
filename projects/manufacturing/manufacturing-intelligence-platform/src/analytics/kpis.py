@@ -2,12 +2,7 @@
 
 from sqlalchemy import create_engine, text
 
-
-DATABASE_URL = (
-    "postgresql+psycopg2://amed@localhost/"
-    "manufacturing_intelligence"
-)
-
+from src.config import DATABASE_URL
 
 KPI_SUMMARY_QUERY = text(
     """

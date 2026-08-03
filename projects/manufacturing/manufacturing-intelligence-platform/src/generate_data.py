@@ -2,6 +2,8 @@ from datetime import date, datetime, time, timedelta, timezone
 
 from sqlalchemy import create_engine, text
 
+from .config import DATABASE_URL
+
 from .etl.generate_customer_order_items import generate_customer_order_items
 from .etl.generate_customer_orders import generate_customer_orders
 from .etl.generate_material_lots import generate_material_lots
@@ -27,12 +29,6 @@ from .etl.load import (
     load_downtime_events,
     load_maintenance_events,
     load_sensor_readings,
-)
-
-
-DATABASE_URL = (
-    "postgresql+psycopg2://amed@localhost/"
-    "manufacturing_intelligence"
 )
 
 

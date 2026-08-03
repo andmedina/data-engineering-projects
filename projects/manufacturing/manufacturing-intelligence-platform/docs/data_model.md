@@ -695,7 +695,10 @@ The model should support questions such as:
 
 # KPI Support
 
-The model will support calculation of the following manufacturing KPIs.
+The current analytics layer implements first-pass yield, scrap rate, rework
+rate, inspection pass rate, cycle-time summaries, and downtime measures.
+Additional formulas below describe metrics the model partially supports or can
+support after the documented schema extensions are added.
 
 ## Overall Equipment Effectiveness
 
@@ -708,6 +711,10 @@ Overall Equipment Effectiveness combines:
 ```text
 OEE = Availability × Performance × Quality
 ```
+
+True OEE is not currently reported. Quality and performance inputs exist, but
+availability requires planned production time at the machine-and-shift grain.
+A future `machine_shift_schedules` table would provide that denominator.
 
 ## Availability
 
@@ -765,7 +772,7 @@ Schedule Attainment =
 Completed Production / Planned Production
 ```
 
-Additional metrics may include:
+Potential future metrics include:
 
 - Throughput
 - Average Cycle Time
@@ -975,15 +982,9 @@ The normalized operational model may later feed an analytical star schema contai
 
 ---
 
-# Next Steps
+# Implementation Status
 
-After this data model is reviewed, the next implementation steps are:
-
-1. Create the PostgreSQL DDL in `database/schema.sql`.
-2. Define primary keys and foreign keys.
-3. Add validation constraints and indexes.
-4. Create reference data in `database/seed.sql`.
-5. Generate synthetic source-system datasets.
-6. Build the Python ETL pipeline.
-7. Add automated data-quality tests.
-8. Build SQL KPI queries and dashboards.
+The PostgreSQL DDL, keys, constraints, indexes, master-data seed, transactional
+generators, ETL loaders, automated tests, SQL analytics, Tableau dashboard, and
+predictive-maintenance proof of concept are implemented. Remaining extensions
+are listed as future enhancements in the project README and architecture guide.
