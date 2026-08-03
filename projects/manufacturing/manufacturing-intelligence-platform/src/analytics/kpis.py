@@ -19,6 +19,7 @@ KPI_SUMMARY_QUERY = text(
             COALESCE(SUM(rework_quantity), 0) AS rework_quantity
         FROM production_runs
         WHERE run_status = 'Completed'
+          AND start_timestamp <= CURRENT_TIMESTAMP
     ),
     inspection_totals AS (
         SELECT
@@ -27,6 +28,7 @@ KPI_SUMMARY_QUERY = text(
             COALESCE(SUM(failed_quantity), 0) AS failed_quantity
         FROM quality_inspections
         WHERE inspection_result <> 'Pending'
+          AND inspection_timestamp <= CURRENT_TIMESTAMP
     ),
     downtime_totals AS (
         SELECT
@@ -36,6 +38,7 @@ KPI_SUMMARY_QUERY = text(
                 0
             ) AS unplanned_downtime_minutes
         FROM downtime_events
+        WHERE downtime_start <= CURRENT_TIMESTAMP
     )
     SELECT
         r.input_quantity,
@@ -66,6 +69,7 @@ MACHINE_KPI_QUERY = text(
             COALESCE(SUM(rework_quantity), 0) AS rework_quantity
         FROM production_runs
         WHERE run_status = 'Completed'
+          AND start_timestamp <= CURRENT_TIMESTAMP
         GROUP BY machine_id
     ),
     downtime_totals AS (
@@ -77,6 +81,7 @@ MACHINE_KPI_QUERY = text(
                 0
             ) AS unplanned_downtime_minutes
         FROM downtime_events
+        WHERE downtime_start <= CURRENT_TIMESTAMP
         GROUP BY machine_id
     )
     SELECT

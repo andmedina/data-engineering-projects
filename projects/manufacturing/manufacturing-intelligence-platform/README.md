@@ -10,6 +10,19 @@ Built using modern data engineering and analytics practices, the platform demons
 
 ---
 
+# Executive Dashboard
+
+![Manufacturing Executive Dashboard](docs/images/manufacturing_executive_dashboard.png)
+
+The Tableau executive dashboard summarizes plant-level first-pass yield, scrap,
+rework, inspection performance, downtime, and monthly quality trends. The
+packaged workbook includes its local analytics data extracts and can be
+downloaded here:
+
+[Download the Tableau packaged workbook](tableau/manufacturing_intelligence_dashboard.twbx)
+
+---
+
 # Business Problem
 
 Modern manufacturing facilities generate large volumes of operational data across multiple business systems. ERP systems manage production orders and inventory, MES systems capture machine activity, quality systems record inspection results, maintenance systems track equipment servicing, and industrial sensors continuously monitor machine health.

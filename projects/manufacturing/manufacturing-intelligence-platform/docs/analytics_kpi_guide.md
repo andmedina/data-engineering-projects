@@ -204,6 +204,10 @@ the current schema does not store a complete scheduled operating calendar.
 The two monthly aggregates are combined with a full outer join so a month is
 retained even if it contains only production or only downtime data.
 
+All analytics reports use the current timestamp as an as-of boundary. Future
+scheduled activity is excluded from historical KPIs so incomplete future
+periods do not distort dashboard trends.
+
 ## OEE limitation
 
 The project does not currently report Overall Equipment Effectiveness (OEE).

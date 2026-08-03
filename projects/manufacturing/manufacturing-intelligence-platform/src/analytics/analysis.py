@@ -24,6 +24,7 @@ PRODUCT_FAMILY_QUERY = text(
     JOIN production_runs pr
         ON pr.production_order_id = po.production_order_id
     WHERE pr.run_status = 'Completed'
+      AND pr.start_timestamp <= CURRENT_TIMESTAMP
     GROUP BY p.product_family
     ORDER BY p.product_family
     """
@@ -43,6 +44,7 @@ DEFECT_ANALYSIS_QUERY = text(
     JOIN quality_inspections qi ON qi.inspection_id = qd.inspection_id
     JOIN production_runs pr ON pr.production_run_id = qi.production_run_id
     JOIN machines m ON m.machine_id = pr.machine_id
+    WHERE qi.inspection_timestamp <= CURRENT_TIMESTAMP
     GROUP BY m.machine_code, dt.defect_category, dt.severity
     ORDER BY defect_quantity DESC, m.machine_code, dt.defect_category
     """
@@ -58,6 +60,7 @@ DOWNTIME_CAUSE_QUERY = text(
         COALESCE(SUM(downtime_minutes), 0) AS downtime_minutes,
         ROUND(AVG(downtime_minutes), 2) AS average_event_minutes
     FROM downtime_events
+    WHERE downtime_start <= CURRENT_TIMESTAMP
     GROUP BY downtime_category, planned_flag
     ORDER BY downtime_minutes DESC, downtime_category
     """
@@ -76,6 +79,7 @@ MONTHLY_TREND_QUERY = text(
         FROM production_runs
         WHERE run_status = 'Completed'
           AND start_timestamp IS NOT NULL
+          AND start_timestamp <= CURRENT_TIMESTAMP
         GROUP BY DATE_TRUNC('month', start_timestamp)::date
     ),
     downtime_months AS (
@@ -87,6 +91,7 @@ MONTHLY_TREND_QUERY = text(
                 0
             ) AS unplanned_downtime_minutes
         FROM downtime_events
+        WHERE downtime_start <= CURRENT_TIMESTAMP
         GROUP BY DATE_TRUNC('month', downtime_start)::date
     )
     SELECT
