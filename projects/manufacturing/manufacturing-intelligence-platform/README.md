@@ -123,6 +123,22 @@ The platform will calculate and monitor operational metrics including:
 - Defect Rate
 - Inventory Accuracy
 
+Run the manufacturing analytics report:
+
+```bash
+python -m src.analytics.kpis
+```
+
+Export dashboard-ready CSV datasets:
+
+```bash
+python -m src.analytics.export_dashboard_data
+```
+
+See [`docs/analytics_kpi_guide.md`](docs/analytics_kpi_guide.md) for each
+report's business questions, source tables, join path, grain, formulas, and
+limitations.
+
 ---
 
 # Technology Stack
@@ -151,27 +167,27 @@ The platform will calculate and monitor operational metrics including:
 
 ## Phase 1 — Data Architecture
 
-- [ ] Design Entity Relationship Diagram (ERD)
-- [ ] Design relational database schema
-- [ ] Define manufacturing entities and relationships
+- [x] Design Entity Relationship Diagram (ERD)
+- [x] Design relational database schema
+- [x] Define manufacturing entities and relationships
 
 ## Phase 2 — Data Generation
 
-- [ ] Generate realistic manufacturing datasets
-- [ ] Simulate ERP data
-- [ ] Simulate MES data
-- [ ] Simulate Quality data
-- [ ] Simulate Sensor data
+- [x] Generate realistic manufacturing datasets
+- [x] Simulate ERP data
+- [x] Simulate MES data
+- [x] Simulate Quality data
+- [x] Simulate Sensor data
 
 ## Phase 3 — ETL Pipeline
 
-- [ ] Extract
-- [ ] Transform
-- [ ] Load into PostgreSQL
+- [x] Extract
+- [x] Transform
+- [x] Load into PostgreSQL
 
 ## Phase 4 — Analytics
 
-- [ ] Manufacturing KPIs
+- [x] Manufacturing KPIs
 - [ ] Root Cause Analysis
 - [ ] Executive Dashboard
 
