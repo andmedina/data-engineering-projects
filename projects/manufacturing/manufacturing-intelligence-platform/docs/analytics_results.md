@@ -47,6 +47,23 @@ causes more actionable improvement areas than the plant-level scrap rate alone.
 
 ![Machine quality and downtime comparison](images/analytics_machine_performance.png)
 
+### Machine-code key
+
+| Code | Machine | Manufacturing operation | Production area |
+|---|---|---|---|
+| CH-01 | Cold Header 1 | Cold Heading | Fastener Line A |
+| CH-02 | Cold Header 2 | Cold Heading | Fastener Line B |
+| TR-01 | Thread Roller 1 | Thread Rolling | Fastener Line A |
+| TR-02 | Thread Roller 2 | Thread Rolling | Fastener Line B |
+| HT-01 | Heat Treat Furnace 1 | Heat Treatment | Heat Treat Line |
+| SF-01 | Surface Finishing 1 | Surface Finishing | Finishing Line |
+| AS-01 | Assembly Cell 1 | Assembly | Assembly Line A |
+| AS-02 | Assembly Cell 2 | Assembly | Assembly Line B |
+| IN-01 | Inspection Station 1 | Inspection | Quality Lab |
+| IN-02 | Inspection Station 2 | Inspection | Quality Lab |
+| PK-01 | Packaging Line 1 | Packaging | Packaging Area |
+| MP-01 | Multi-Purpose Cell 1 | Multi-Purpose | Prototype Line |
+
 | Machine | Completed runs | FPY | Scrap | Rework | Downtime (min) | Unplanned (min) |
 |---|---:|---:|---:|---:|---:|---:|
 | AS-01 | 286 | 98.72% | 0.46% | 0.83% | 2,333 | 1,326 |
