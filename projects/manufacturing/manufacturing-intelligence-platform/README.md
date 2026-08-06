@@ -29,11 +29,14 @@ Modern manufacturing facilities generate large volumes of operational data acros
 
 Although each system provides valuable information independently, these data sources often exist in isolation. This fragmentation makes it difficult for engineers, production managers, and plant leadership to answer critical operational questions, including:
 
-- Why did scrap increase yesterday?
+- Which machines, operations, products, and defect categories contributed to a
+  change in scrap yesterday?
 - Which machines experience the most downtime?
-- Which production lines consistently achieve the highest first-pass yield?
-- Are equipment failures preceded by abnormal sensor readings?
-- Which suppliers are associated with higher defect rates?
+- Which machines and manufacturing operations consistently achieve the
+  highest first-pass yield?
+- Are simulated mechanical failures preceded by abnormal sensor readings?
+- Which suppliers have the highest incoming material rejection rates, and are
+  their lots associated with higher downstream defect rates?
 - Which additional scheduling data would be required to calculate defensible Overall Equipment Effectiveness (OEE)?
 
 This project simulates the role of a Manufacturing Data Scientist responsible for designing a unified analytics platform that consolidates these operational systems into a centralized environment for reporting, root cause analysis, and predictive analytics.
