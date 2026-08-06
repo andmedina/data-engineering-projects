@@ -100,7 +100,7 @@ The platform integrates simulated data from several manufacturing systems.
 
 # Project Architecture
 
-![Manufacturing Intelligence Platform architecture](docs/images/project_architecture.svg)
+![Manufacturing Intelligence Platform architecture](docs/images/project_architecture.png)
 
 See [`docs/architecture.md`](docs/architecture.md) for the component design,
 source-system mappings, data flow, validation layers, and scope boundaries.
