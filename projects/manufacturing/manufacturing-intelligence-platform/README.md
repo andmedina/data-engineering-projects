@@ -124,6 +124,8 @@ The implemented analytics layer reports:
 - Downtime causes by frequency and duration
 - Monthly quality and downtime trends
 
+[View the complete manufacturing analytics results](docs/analytics_results.md)
+
 Run the manufacturing analytics report:
 
 ```bash
