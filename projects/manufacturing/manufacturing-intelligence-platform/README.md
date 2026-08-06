@@ -1,7 +1,5 @@
 # Manufacturing Intelligence Platform
 
-![Aerospace fastener manufacturing intelligence platform](docs/images/manufacturing_intelligence_banner.png)
-
 > **Status:** Complete portfolio implementation
 
 ## Overview
@@ -102,25 +100,7 @@ The platform integrates simulated data from several manufacturing systems.
 
 # Project Architecture
 
-```
-ERP
-MES
-Quality
-Inventory
-Maintenance
-IoT Sensors
-        │
-        ▼
-Python ETL Pipelines
-        │
-        ▼
-PostgreSQL Data Warehouse
-        │
-        ├──────────────► SQL Analytics
-        ├──────────────► KPI Calculations
-        ├──────────────► Tableau Dashboards
-        └──────────────► Machine Learning Models
-```
+![Manufacturing Intelligence Platform architecture](docs/images/project_architecture.svg)
 
 See [`docs/architecture.md`](docs/architecture.md) for the component design,
 source-system mappings, data flow, validation layers, and scope boundaries.
