@@ -1,5 +1,7 @@
 # Manufacturing Intelligence Platform
 
+![Aerospace fastener manufacturing intelligence platform](docs/images/manufacturing_intelligence_banner.png)
+
 > **Status:** Complete portfolio implementation
 
 ## Overview
