@@ -2,9 +2,9 @@
 
 import pandas as pd
 from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import Connection, Engine
 
-from config import DATABASE_URL, PROCESSED_DATA_DIR
+from .config import DATABASE_URL, PROCESSED_DATA_DIR
 
 
 def ensure_processed_data_directory() -> None:
@@ -26,7 +26,7 @@ def get_database_engine() -> Engine:
     return create_engine(DATABASE_URL)
 
 
-def refresh_postgres_tables(engine: Engine) -> None:
+def refresh_postgres_tables(connection: Connection) -> None:
     """
     Clear existing PostgreSQL records before loading fresh pipeline outputs.
 
@@ -36,40 +36,39 @@ def refresh_postgres_tables(engine: Engine) -> None:
     In production, this would typically be replaced with staging tables,
     incremental loads, or UPSERT logic.
     """
-    with engine.begin() as connection:
-        connection.execute(
-            text(
-                """
-                TRUNCATE TABLE
-                    bom,
-                    inventory,
-                    parts,
-                    suppliers
-                RESTART IDENTITY CASCADE;
-                """
-            )
+    connection.execute(
+        text(
+            """
+            TRUNCATE TABLE
+                bom,
+                inventory,
+                parts,
+                suppliers;
+            """
         )
+    )
 
 
 def load_dataframes_to_postgres(dataframes: dict[str, pd.DataFrame]) -> None:
     """Load transformed datasets into PostgreSQL tables."""
     engine: Engine = get_database_engine()
 
-    refresh_postgres_tables(engine)
-
     load_order: list[str] = ["suppliers", "parts", "inventory", "bom"]
 
-    for table_name in load_order:
-        dataframe = dataframes[table_name]
+    with engine.begin() as connection:
+        refresh_postgres_tables(connection)
 
-        dataframe.to_sql(
-            table_name,
-            engine,
-            if_exists="append",
-            index=False,
-        )
+        for table_name in load_order:
+            dataframe = dataframes[table_name]
 
-        print(f"Loaded {len(dataframe)} rows into {table_name}")
+            dataframe.to_sql(
+                table_name,
+                connection,
+                if_exists="append",
+                index=False,
+            )
+
+            print(f"Loaded {len(dataframe)} rows into {table_name}")
 
 
 # Production-oriented alternative:

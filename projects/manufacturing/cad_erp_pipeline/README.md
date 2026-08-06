@@ -1,350 +1,217 @@
 # CAD-to-ERP Engineering Data Pipeline
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white">
-  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
-  <img src="https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white">
-  <img src="https://img.shields.io/badge/ETL_Pipeline-Engineering_Data-blue?style=for-the-badge">
-</p>
+A portfolio-scale ETL project that simulates moving aerospace CAD/PLM parts,
+assembly BOMs, suppliers, and inventory data into cleaned relational CSVs and
+PostgreSQL.
 
-## Overview
+The project intentionally stays focused on engineering-data integration. It
+does not perform forecasting, inventory optimization, purchase recommendations,
+production scheduling, machine learning, or LLM processing.
 
-This project simulates a real-world aerospace manufacturing and engineering data pipeline that integrates CAD/PLM-style engineering metadata with ERP and inventory-style operational datasets.
+## Pipeline
 
-The pipeline extracts engineering source exports, generates scalable synthetic manufacturing datasets, validates manufacturing data quality, transforms nested Bill of Materials (BOM) structures into relational tables, loads transformed datasets into PostgreSQL, generates automated data quality reports, and produces analytics-ready datasets for downstream reporting and operational workflows.
-
-This project was designed to simulate engineering/manufacturing data environments commonly found in:
-- aerospace manufacturing
-- defense contractors
-- CAD/PLM systems
-- ERP systems
-- manufacturing analytics platforms
-
----
-
-# Pipeline Architecture
-
-```mermaid
-flowchart LR
-    A[Source Engineering Exports] --> B[Synthetic Scaling Layer]
-    B --> C[Raw Operational Datasets]
-    C --> D[Extract Layer]
-    D --> E[Validation Layer]
-    E --> F[Transformation Layer]
-    F --> G[Processed Analytics Tables]
+```text
+data/source seed JSON/CSV exports
+    -> deterministic synthetic scaling
+    -> data/raw operational CSVs
+    -> extraction and validation
+    -> transformation
+    -> data/processed relational CSVs
+    -> atomic PostgreSQL full refresh
+    -> data-quality report and SQL analytics
 ```
 
----
+![CAD-to-ERP pipeline execution](images/cad_erp_pipeline_execution.png)
 
-# Engineering Data Workflow
+The default random seed (`42`) makes generated data reproducible. A complete
+run currently produces:
+
+| Dataset | Rows | Destination |
+|---|---:|---|
+| Parts | 250 | `parts` |
+| Suppliers | 4 | `suppliers` |
+| Inventory | 250 | `inventory` |
+| BOM relationships | 222 | `bom` |
+| Assembly metadata | 40 | Raw intermediate only |
+
+Assembly metadata is used to generate BOM relationships but is not a fifth
+database table. The database scope remains the four tables above.
+
+### Relational model
 
 ```mermaid
-flowchart TD
-    A[CAD Metadata JSON] --> B[Engineering Parts Table]
-    C[Assembly BOM JSON] --> D[Flattened Relational BOM Table]
-    E[Supplier CSV] --> F[Supplier Dimension Table]
-    G[Inventory CSV] --> H[Inventory Analytics Table]
+erDiagram
+    SUPPLIERS ||--o{ PARTS : supplies
+    PARTS ||--|| INVENTORY : stocked_as
+    PARTS ||--o{ BOM : used_in
 
-    B --> I[Manufacturing Analytics]
-    D --> I
-    F --> I
-    H --> I
-```
-
----
-
-# Key Features
-
-- Extracts engineering and manufacturing source exports
-- Generates scalable synthetic aerospace manufacturing datasets
-- Processes JSON and CSV operational datasets
-- Validates engineering metadata and supplier relationships
-- Flattens nested BOM structures into relational tables
-- Produces analytics-ready manufacturing datasets
-- Simulates CAD-to-ERP engineering workflows
-- Demonstrates modular ETL pipeline architecture
-- Implements inventory business-rule transformations
-- Simulates operational-scale manufacturing environments
-- Loads transformed datasets into PostgreSQL
-- Generates automated data quality reports
-- Provides SQL analytics queries for operational reporting
-- Implements pipeline observability and execution metrics
-
----
-
-# Synthetic Operational Scaling
-
-The project includes a synthetic scaling layer that expands seed engineering exports into larger operational manufacturing datasets.
-
-This allows the pipeline to simulate:
-- large aerospace part inventories
-- multi-assembly manufacturing relationships
-- operational warehouse inventory tracking
-- ERP-style manufacturing datasets
-- scalable relational manufacturing workflows
-
-Example scaling:
-- hundreds of engineering parts
-- dozens of assemblies
-- large relational BOM relationships
-- expanded inventory operations
-
-This simulates how engineering metadata may evolve into larger operational manufacturing datasets inside real enterprise environments.
-
----
-
-# Example Engineering Transformation
-
-One major transformation performed by the pipeline is converting nested engineering BOM structures into relational manufacturing tables.
-
-## Source Engineering BOM Structure
-
-```json
-{
-  "assembly_id": "ASM-001",
-  "parts": [
-    {
-      "part_number": "KSD-AER-1001",
-      "quantity": 1
+    SUPPLIERS {
+        varchar supplier_id PK
+        varchar supplier_name
+        varchar country
+        varchar supplier_type
     }
-  ]
-}
+    PARTS {
+        varchar part_number PK
+        varchar supplier_id FK
+        varchar part_name
+        varchar revision
+        decimal weight_kg
+        varchar engineering_status
+    }
+    INVENTORY {
+        varchar part_number PK, FK
+        int stock_quantity
+        int reorder_level
+        varchar warehouse_location
+        boolean below_reorder_level
+    }
+    BOM {
+        varchar assembly_id PK
+        varchar part_number PK, FK
+        varchar assembly_name
+        varchar assembly_revision
+        int quantity
+    }
 ```
 
-## Flattened Relational Output
+## What the pipeline demonstrates
 
-| assembly_id | part_number | quantity |
-|---|---|---|
-| ASM-001 | KSD-AER-1001 | 1 |
+- JSON and CSV seed ingestion
+- Reproducible synthetic operational data generation
+- Flat relational extraction from `data/raw/`
+- Required-column, null, identifier, numeric, and reference validation
+- Normalization of engineering, supplier, inventory, and BOM fields
+- Flattening of nested seed BOM structures through a reusable transformation
+- A derived `below_reorder_level` flag (`stock_quantity < reorder_level`)
+- Processed CSV delivery
+- Transactional, dependency-ordered PostgreSQL full refreshes
+- Data-quality reporting based on actual validation results
+- SQL examples for supplier exposure, shared parts, and assembly inventory risk
 
-This transformation is highly relevant to:
-- ERP systems
-- manufacturing databases
-- engineering analytics
-- aerospace assembly tracking
-- relational SQL workflows
-
----
-
-# Inventory Business Logic
-
-The pipeline derives operational analytics fields from raw inventory exports.
-
-Example:
-
-```python
-below_reorder_level = stock_quantity < reorder_level
-```
-
-This simulates real-world ERP inventory monitoring and procurement alert workflows.
-
----
-
-# Project Structure
+## Project structure
 
 ```text
 cad_erp_pipeline/
-├── data
-│   ├── source
-│   ├── raw
-│   └── processed
-├── images
-├── logs
-├── sql
-├── src
+├── data/
+│   ├── source/       # tracked seed exports
+│   ├── raw/          # generated and ignored
+│   └── processed/    # generated and ignored
+├── logs/             # generated and ignored
+├── images/
+│   └── cad_erp_pipeline_execution.png
+├── sql/
+│   ├── schema.sql
+│   └── analytics_queries.sql
+├── src/
 │   ├── config.py
 │   ├── extract.py
 │   ├── generate_data.py
 │   ├── load.py
 │   ├── main.py
+│   ├── report.py
 │   ├── transform.py
 │   └── validate.py
+├── tests/
+├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
 
----
+## Setup
 
-# Source Data Files
+Use Python 3.10 or newer.
 
-| File | Purpose |
-|---|---|
-| `cad_parts_export.json` | Simulated CAD/PLM engineering metadata export |
-| `assembly_bom_export.json` | Nested engineering Bill of Materials (BOM) structures |
-| `suppliers_export.csv` | ERP supplier and procurement data |
-| `inventory_export.csv` | Inventory and warehouse operational data |
-
----
-
-# Raw Operational Outputs
-
-The synthetic scaling layer generates larger operational manufacturing datasets inside:
-
-```text
-data/raw/
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-Generated datasets include:
-- large engineering parts datasets
-- expanded assembly relationships
-- operational inventory records
-- relational manufacturing BOM tables
+Create a local `.env` file. It is excluded from Git and its values should not
+be printed or committed.
 
-These datasets simulate operational-scale aerospace manufacturing environments.
-
----
-
-# Processed Outputs
-
-| Output File | Description |
-|---|---|
-| `parts_processed.csv` | Cleaned and standardized engineering part metadata with normalized revisions, materials, and engineering status values |
-| `bom_processed.csv` | Flattened relational Bill of Materials (BOM) table generated from nested assembly structures for SQL-based analysis |
-| `suppliers_processed.csv` | Standardized supplier master dataset with normalized supplier identifiers and procurement attributes |
-| `inventory_processed.csv` | Inventory analytics dataset containing warehouse inventory metrics and derived business logic such as reorder-level monitoring |
-| `data_quality_report.txt` | Automated data quality report summarizing row counts, missing values, duplicate records, and overall pipeline quality metrics |
-| PostgreSQL Tables | Transformed datasets loaded into PostgreSQL for downstream reporting, analytics, and operational workflows |
-
-
----
-
----
-
-# Data Quality Reporting
-
-The pipeline automatically generates a data quality report during execution.
-
-Generated report:
-
-```text
-logs/data_quality_report.txt
+```dotenv
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=your_database
 ```
 
-The report summarizes:
+Create the four tables once, against the intended database:
 
-- dataset row counts
-- column counts
-- missing values
-- duplicate rows
-- overall pipeline quality metrics
-
-Example output:
-
-```text
-Overall Summary
---------------------
-Datasets Evaluated: 4
-Total Rows Processed: 17
-Total Missing Values: 0
-Total Duplicate Rows: 0
-
-Status: PASSED
+```bash
+psql -U your_user -d your_database -f sql/schema.sql
 ```
 
-This simulates enterprise data quality monitoring workflows commonly used in manufacturing and ERP environments.
+`schema.sql` drops and recreates only `bom`, `inventory`, `parts`, and
+`suppliers`, in dependency-safe order. Review the target database before
+running it.
 
----
+## Run the complete pipeline
 
-# Analytics Queries
+From the project root:
 
-The project includes example SQL analytics queries located in:
-
-```text
-sql/analytics_queries.sql
+```bash
+python -m src.main
 ```
 
-Example business use cases:
+That single command regenerates raw data, extracts it, validates it, transforms
+it, writes processed CSVs and the quality report, and refreshes PostgreSQL.
 
-- Inventory shortage monitoring
-- Supplier dependency analysis
-- Assembly complexity reporting
-- Engineering review tracking
-- Inventory exposure analysis
-- Manufacturing operational reporting
+The database refresh truncates exactly `bom`, `inventory`, `parts`, and
+`suppliers`, then inserts suppliers, parts, inventory, and BOM rows. The
+truncate and all inserts share one transaction; an insert failure rolls the
+entire refresh back.
 
-Example analytics questions answered by the project:
+To generate only the raw layer:
 
-- Which parts are below reorder level?
-- Which suppliers support the most engineering components?
-- Which assemblies contain the largest number of parts?
-- Which warehouses hold the most inventory?
-- Which engineering parts are currently under review?
+```bash
+python -m src.generate_data
+```
 
-These queries demonstrate how transformed ERP-style datasets can support downstream reporting and operational decision-making workflows.
+## Validation and quality reporting
 
----
+The pipeline checks:
 
-# Pipeline Execution Example
+- required columns and missing values in every raw dataset
+- unique part, supplier, inventory, and assembly identifiers
+- unique `(assembly_id, part_number)` BOM relationships
+- valid engineering statuses
+- positive part weights and BOM quantities
+- nonnegative stock quantities and reorder levels
+- valid supplier references from parts
+- valid part references from BOM and inventory
 
-The pipeline provides execution observability throughout the ETL lifecycle, including extraction metrics, validation status, transformation statistics, data quality reporting, PostgreSQL load metrics, and runtime tracking.
+The generated report is `logs/data_quality_report.txt`. Its validation section
+lists each check and derives the final `PASSED` or `FAILED` status from those
+results. On a validation failure, the report is written before the pipeline
+stops.
 
-Example pipeline execution:
+## Tests
 
-![Pipeline Execution](images/pipeline_execution.png)
+```bash
+python -m pytest -q
+```
 
-Key execution metrics include:
+Tests cover raw extraction, deterministic scaling, transformations, nested BOM
+flattening, validation success and failure cases, reference integrity, reorder
+flags, and quality-report status.
 
-- source dataset row counts
-- transformed dataset row counts
-- validation status
-- data quality report generation
-- PostgreSQL load statistics
-- total pipeline runtime
+## SQL analytics
 
-This observability layer helps simulate production-style monitoring and troubleshooting workflows commonly used in enterprise data engineering environments.
+After a successful load, run the examples in `sql/analytics_queries.sql` to
+inspect supplier inventory exposure, parts shared across assemblies, and
+assembly components below reorder level.
 
----
+## Limitations
 
-# Technologies Used
-
-- Python
-- Pandas
-- PostgreSQL
-- SQL
-- JSON
-- CSV
-- ETL Pipelines
-- Data Validation
-- Relational Modeling
-
----
-
-# Data Validation Checks
-
-The pipeline validates:
-- required columns
-- missing values
-- duplicate part numbers
-- invalid engineering statuses
-- negative inventory values
-- missing supplier relationships
-
----
-
-# Data Sources
-
-This project currently uses synthetic engineering and manufacturing metadata to simulate aerospace and CAD-to-ERP operational workflows.
-
-In production environments, similar data is commonly sourced from:
-- CAD/PLM platforms
-- ERP systems
-- manufacturing databases
-- engineering BOM exports
-- supplier and inventory systems
-
-Example public datasets and references:
-- https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification
-- https://www.kaggle.com/datasets/amirmotefaker/supply-chain-dataset
-
----
-
-# Future Improvements
-
-- Apache Airflow orchestration
-- Automated pipeline scheduling
-- ERP API integrations
-- Engineering revision history tracking
-- Supplier lead-time analytics
-- Inventory forecasting
-- Manufacturing KPI dashboards
-- Real-time manufacturing event streaming
+- Data is synthetic and generated from four small seed exports.
+- The loader is intentionally a local-development full refresh, not an
+  incremental or production ingestion design.
+- Assembly revision history, effectivity dates, alternate parts, units of
+  measure, and multi-level assembly-to-assembly BOMs are outside this project.
+- The reorder flag is descriptive only; it is not a purchasing recommendation
+  or an optimization feature.
+- PostgreSQL tables must exist before the pipeline runs.

@@ -4,13 +4,14 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import LOG_DIR
+from .config import LOG_DIR
 
 
 def generate_data_quality_report(
     dataframes: dict[str, pd.DataFrame],
+    validation_results: list[dict[str, object]],
 ) -> None:
-    """Generate a simple data quality report for transformed datasets."""
+    """Generate a quality report whose status reflects validation results."""
     LOG_DIR.mkdir(parents=True, exist_ok=True)
 
     report_path: Path = LOG_DIR / "data_quality_report.txt"
@@ -45,5 +46,14 @@ def generate_data_quality_report(
         report.write(f"Total Rows Processed: {total_rows}\n")
         report.write(f"Total Missing Values: {total_missing_values}\n")
         report.write(f"Total Duplicate Rows: {total_duplicate_rows}\n\n")
+        report.write("Validation Checks\n")
+        report.write("-" * 20 + "\n")
+        for result in validation_results:
+            status = "PASSED" if result["passed"] else "FAILED"
+            report.write(f"{result['check']}: {status}")
+            if not result["passed"]:
+                report.write(f" - {result['message']}")
+            report.write("\n")
 
-        report.write("Status: PASSED\n")
+        all_passed = all(result["passed"] for result in validation_results)
+        report.write(f"\nStatus: {'PASSED' if all_passed else 'FAILED'}\n")

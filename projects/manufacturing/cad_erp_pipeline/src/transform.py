@@ -66,6 +66,17 @@ def flatten_assembly_bom(assemblies_df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(bom_rows)
 
 
+def transform_bom(bom_df: pd.DataFrame) -> pd.DataFrame:
+    """Clean and standardize relational BOM rows."""
+    transformed_df = bom_df.copy()
+    transformed_df["assembly_id"] = transformed_df["assembly_id"].str.upper()
+    transformed_df["assembly_revision"] = transformed_df[
+        "assembly_revision"
+    ].str.upper()
+    transformed_df["part_number"] = transformed_df["part_number"].str.upper()
+    return transformed_df
+
+
 def transform_all_sources(
     source_dataframes: dict[str, pd.DataFrame],
 ) -> dict[str, pd.DataFrame]:
@@ -77,9 +88,7 @@ def transform_all_sources(
     inventory_df: pd.DataFrame = transform_inventory(
         source_dataframes["inventory"]
     )
-    bom_df: pd.DataFrame = flatten_assembly_bom(
-        source_dataframes["assemblies"]
-    )
+    bom_df: pd.DataFrame = transform_bom(source_dataframes["bom"])
 
     return {
         "parts": parts_df,

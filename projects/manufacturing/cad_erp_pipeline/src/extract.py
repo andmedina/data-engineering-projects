@@ -1,43 +1,39 @@
-"""Extract source engineering and manufacturing data files."""
-
-import json
-from pathlib import Path
+"""Extract scaled engineering and manufacturing data from raw CSV files."""
 
 import pandas as pd
 
-from config import SOURCE_DATA_DIR
-
-
-def load_json_file(file_path: Path) -> list[dict]:
-    """Load a JSON file and return a list of records."""
-    with file_path.open("r", encoding="utf-8") as file:
-        return json.load(file)
+from .config import (
+    ASSEMBLIES_RAW_PATH,
+    BOM_RAW_PATH,
+    INVENTORY_RAW_PATH,
+    PARTS_RAW_PATH,
+    SUPPLIERS_RAW_PATH,
+)
 
 
 def extract_cad_parts() -> pd.DataFrame:
-    """Extract CAD part metadata from JSON source export."""
-    records: list[dict] = load_json_file(
-        SOURCE_DATA_DIR / "cad_parts_export.json"
-    )
-    return pd.DataFrame(records)
+    """Extract scaled CAD part metadata from the raw layer."""
+    return pd.read_csv(PARTS_RAW_PATH)
 
 
 def extract_assembly_bom() -> pd.DataFrame:
-    """Extract nested assembly BOM data from JSON source export."""
-    records: list[dict] = load_json_file(
-        SOURCE_DATA_DIR / "assembly_bom_export.json"
-    )
-    return pd.DataFrame(records)
+    """Extract scaled assembly metadata from the raw layer."""
+    return pd.read_csv(ASSEMBLIES_RAW_PATH)
+
+
+def extract_bom() -> pd.DataFrame:
+    """Extract scaled relational BOM rows from the raw layer."""
+    return pd.read_csv(BOM_RAW_PATH)
 
 
 def extract_suppliers() -> pd.DataFrame:
-    """Extract supplier data from CSV source export."""
-    return pd.read_csv(SOURCE_DATA_DIR / "suppliers_export.csv")
+    """Extract supplier data from the raw layer."""
+    return pd.read_csv(SUPPLIERS_RAW_PATH)
 
 
 def extract_inventory() -> pd.DataFrame:
-    """Extract inventory data from CSV source export."""
-    return pd.read_csv(SOURCE_DATA_DIR / "inventory_export.csv")
+    """Extract inventory data from the raw layer."""
+    return pd.read_csv(INVENTORY_RAW_PATH)
 
 
 def extract_all_sources() -> dict[str, pd.DataFrame]:
@@ -45,6 +41,7 @@ def extract_all_sources() -> dict[str, pd.DataFrame]:
     return {
         "parts": extract_cad_parts(),
         "assemblies": extract_assembly_bom(),
+        "bom": extract_bom(),
         "suppliers": extract_suppliers(),
         "inventory": extract_inventory(),
     }

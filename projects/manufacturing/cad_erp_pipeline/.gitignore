@@ -1,3 +1,14 @@
 __pycache__/
 *.pyc
 .env
+.pytest_cache/
+.DS_Store
+
+# Generated pipeline artifacts
+data/raw/
+data/processed/
+logs/
+
+# Required CSV seed exports override the repository-wide *.csv rule.
+!data/source/suppliers_export.csv
+!data/source/inventory_export.csv

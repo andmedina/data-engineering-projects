@@ -2,14 +2,14 @@
 
 import time
 
-from extract import extract_all_sources
-from load import load_dataframes_to_postgres, save_processed_data
-from report import generate_data_quality_report
-from transform import transform_all_sources
-from validate import (
-    validate_inventory_data,
-    validate_parts_data,
-    validate_supplier_relationships,
+from .extract import extract_all_sources
+from .generate_data import save_raw_scaled_data
+from .load import load_dataframes_to_postgres, save_processed_data
+from .report import generate_data_quality_report
+from .transform import transform_all_sources
+from .validate import (
+    raise_for_validation_failures,
+    validate_all_sources,
 )
 
 
@@ -37,7 +37,10 @@ def main() -> None:
     """
     start_time = time.time()
 
-    log_step("EXTRACT")
+    log_step("SYNTHETIC SCALING")
+    save_raw_scaled_data()
+
+    log_step("EXTRACT RAW DATA")
     source_dataframes = extract_all_sources()
 
     log_rows("parts (source)", source_dataframes["parts"])
@@ -47,12 +50,10 @@ def main() -> None:
 
     log_step("VALIDATION")
 
-    validate_parts_data(source_dataframes["parts"])
-    validate_inventory_data(source_dataframes["inventory"])
-    validate_supplier_relationships(
-        source_dataframes["parts"],
-        source_dataframes["suppliers"],
-    )
+    validation_results = validate_all_sources(source_dataframes)
+    if not all(result["passed"] for result in validation_results):
+        generate_data_quality_report(source_dataframes, validation_results)
+        raise_for_validation_failures(validation_results)
 
     print("Validation checks passed")
 
@@ -68,7 +69,7 @@ def main() -> None:
     save_processed_data(transformed_dataframes)
 
     log_step("DATA QUALITY REPORT")
-    generate_data_quality_report(transformed_dataframes)
+    generate_data_quality_report(transformed_dataframes, validation_results)
     print("Data quality report saved to logs/data_quality_report.txt")
 
     log_step("LOAD TO POSTGRESQL")

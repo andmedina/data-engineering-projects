@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime
 
-from config import LOG_DIR
+from .config import LOG_DIR
 
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 

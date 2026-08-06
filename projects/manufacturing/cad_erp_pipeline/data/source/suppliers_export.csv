@@ -1,0 +1,5 @@
+supplier_id,supplier_name,country,supplier_type
+SUP-001,Aero Composite Systems,USA,composite_materials
+SUP-002,Precision Titanium Works,USA,metal_fabrication
+SUP-003,Avionics Hardware Group,USA,electronics_hardware
+SUP-004,Thermal Protection Solutions,Germany,thermal_materials

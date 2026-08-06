@@ -1,0 +1,5 @@
+part_number,stock_quantity,reorder_level,warehouse_location,last_updated
+KSD-AER-1001,12,5,WH-A,2026-05-01
+KSD-AER-1002,4,3,WH-B,2026-05-02
+KSD-AER-1003,28,10,WH-A,2026-05-03
+KSD-AER-1004,6,8,WH-C,2026-05-04
