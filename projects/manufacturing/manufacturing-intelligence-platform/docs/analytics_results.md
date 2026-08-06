@@ -13,10 +13,22 @@ Reproduce the complete terminal report from the project root:
 python -m src.analytics.kpis
 ```
 
+Recreate the figures embedded in this report:
+
+```bash
+python -m src.analytics.create_results_figures
+```
+
 The queries use the current timestamp as an as-of boundary, so results can
 change as generated events become historical records.
 
 ## Executive KPI Summary
+
+The existing Tableau executive dashboard visualizes the plant-level KPI cards
+and monthly quality trends. The Python figures below supplement that dashboard
+with analyses it does not currently display.
+
+![Manufacturing Executive Dashboard](images/manufacturing_executive_dashboard.png)
 
 | KPI | Result |
 |---|---:|
@@ -32,6 +44,8 @@ downtime is unplanned. This makes equipment reliability and interruption
 causes more actionable improvement areas than the plant-level scrap rate alone.
 
 ## Machine Performance
+
+![Machine quality and downtime comparison](images/analytics_machine_performance.png)
 
 | Machine | Completed runs | FPY | Scrap | Rework | Downtime (min) | Unplanned (min) |
 |---|---:|---:|---:|---:|---:|---:|
@@ -63,6 +77,8 @@ comparison would require planned machine schedules.
 
 ## Product-Family Performance
 
+![Product-family quality and cycle-time comparison](images/analytics_product_family.png)
+
 | Product family | Completed runs | FPY | Scrap | Rework | Avg. cycle time (sec) |
 |---|---:|---:|---:|---:|---:|
 | Blind Bolt | 1,387 | 98.92% | 0.35% | 0.73% | 7.65 |
@@ -78,6 +94,8 @@ highest scrap rate, making them a reasonable starting point for a more focused
 process review.
 
 ## Largest Defect Concentrations
+
+![Quality defect concentrations and downtime causes](images/analytics_loss_drivers.png)
 
 | Rank | Machine | Category | Severity | Defect records | Defect quantity |
 |---:|---|---|---|---:|---:|
@@ -111,6 +129,11 @@ occur less often but have the longest average duration among unplanned causes,
 which suggests a separate supply-chain improvement opportunity.
 
 ## Monthly Trend Snapshot
+
+The Tableau dashboard displays monthly FPY, scrap, and rework. This Python
+figure adds the missing monthly total and unplanned downtime view.
+
+![Monthly total and unplanned downtime](images/analytics_monthly_downtime.png)
 
 | Month | FPY | Scrap | Rework | Downtime (min) | Unplanned (min) |
 |---|---:|---:|---:|---:|---:|
