@@ -40,7 +40,7 @@
     <rect x="75" y="413" width="240" height="105" rx="12" fill="#ffffff"/>
     <text x="95" y="443" class="box-title">Available Supply</text>
     <text x="95" y="469" class="small">inventory_balances</text>
-    <text x="95" y="493" class="small">purchase_order_lines</text>
+    <text x="95" y="493" class="small">purchase_orders</text>
 
     <rect x="75" y="538" width="240" height="105" rx="12" fill="#ffffff"/>
     <text x="95" y="568" class="box-title">Purchasing Rules</text>

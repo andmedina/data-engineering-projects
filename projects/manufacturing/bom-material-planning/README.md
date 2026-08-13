@@ -8,7 +8,7 @@ The BOM Material Planning project simulates how an aerospace manufacturer can
 translate a production plan into actionable material-purchasing
 recommendations.
 
-The project will combine finished-product demand, bills of materials (BOMs),
+The project combines finished-product demand, bills of materials (BOMs),
 inventory balances, open purchase orders, supplier lead times, safety stock,
 and purchasing constraints to answer two practical questions:
 
@@ -16,7 +16,7 @@ and purchasing constraints to answer two practical questions:
 > placed?
 
 This is an independent portfolio project focused on material requirements
-planning. It will use synthetic data and will not depend on the Manufacturing
+planning. It uses synthetic data and does not depend on the Manufacturing
 Intelligence Platform database or code.
 
 ## Business Problem
@@ -42,7 +42,7 @@ too late, or purchasing unnecessary inventory.
 
 ## Business Questions
 
-The first version will answer:
+The implemented version answers:
 
 1. What materials are required for the current production plan?
 2. How much of each material is required and when is it needed?
@@ -119,26 +119,40 @@ Recreate the planning figures:
 python -m src.planning.create_results_figures
 ```
 
-Generate or safely skip the three planning source datasets:
+## Run Locally
+
+From the project root, install the Python dependencies and create a dedicated
+PostgreSQL database:
+
+```bash
+python -m pip install -r requirements.txt
+createdb bom_material_planning
+psql -d bom_material_planning -f database/schema.sql
+psql -d bom_material_planning -f database/seed.sql
+```
+
+The default connection URL is
+`postgresql+psycopg2:///bom_material_planning`. Set the `DATABASE_URL`
+environment variable when PostgreSQL uses a different user, host, port, or
+database name.
+
+Generate the transactional planning data, run the planning report, and verify
+the business rules:
 
 ```bash
 python -m src.generate_data
-```
-
-Run the automated business-rule tests:
-
-```bash
+python -m src.planning.report
+python -m src.planning.create_results_figures
 python -m pytest -q
 ```
 
-## Minimum Viable Scope
+## Implemented Scope
 
-The initial implementation will use deterministic planning logic and
-single-level BOMs. Each finished product will reference its raw materials
-directly; intermediate subassemblies will not have separate BOMs in the first
-version.
+The implementation uses deterministic planning logic and single-level BOMs.
+Each finished product references its raw materials directly; intermediate
+subassemblies do not have separate BOMs in this version.
 
-The project will include:
+The project includes:
 
 - a normalized PostgreSQL schema;
 - realistic synthetic master and planning data;
@@ -152,7 +166,7 @@ The project will include:
 - a reproducible planning report; and
 - project documentation describing formulas, assumptions, and limitations.
 
-## Initial Data Model
+## Implemented Data Model
 
 ### Master data
 
@@ -173,8 +187,8 @@ The project will include:
 | `inventory_balances` | On-hand, reserved, restricted, and safety-stock quantities |
 | `purchase_orders` | Open material orders and expected receipt dates |
 
-Purchase recommendations will initially be a calculated analytical result
-rather than manually seeded source data.
+Purchase recommendations are calculated analytical results rather than
+manually seeded source data.
 
 ## Core Business Rules
 
@@ -238,7 +252,7 @@ stock, and purchase orders expected to arrive in time.
 
 ## Deliberate First-Version Boundaries
 
-The first release will not include:
+The current release does not include:
 
 - multi-level or recursive BOMs;
 - statistical demand forecasting;
@@ -256,24 +270,23 @@ the planning engine should then translate that forecast into material needs.
 An LLM may eventually summarize shortage risks, but it should not replace the
 underlying calculations.
 
-## Planned Technology Stack
+## Technology Stack
 
 - Python
 - SQL
 - PostgreSQL
 - SQLAlchemy Core
-- Pandas
 - pytest
 - Matplotlib
 - Git
 
-## Planned Delivery Stages
+## Delivery Status
 
-1. Confirm the data model and calculation definitions.
-2. Create the PostgreSQL schema and seed master data.
-3. Generate production demand, inventory, and purchase-order data.
-4. Implement and validate single-level BOM explosion.
-5. Implement time-phased inventory and scheduled-receipt netting.
-6. Generate constrained purchase recommendations.
-7. Add tests, analytical outputs, and documentation.
-8. Evaluate multi-level BOM and demand-forecasting enhancements.
+1. Completed the data model and calculation definitions.
+2. Created the PostgreSQL schema and seeded master data.
+3. Generated production demand, inventory, and purchase-order data.
+4. Implemented and validated single-level BOM explosion.
+5. Implemented time-phased inventory and scheduled-receipt netting.
+6. Generated constrained purchase recommendations.
+7. Added tests, analytical outputs, figures, and documentation.
+8. Deferred multi-level BOM and demand forecasting as future enhancements.

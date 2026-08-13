@@ -2,10 +2,10 @@
 
 ## Purpose
 
-This document defines the first-version relational model before implementation
-in PostgreSQL. The model supports deterministic, single-level BOM material
-planning: finished-product demand is converted into time-phased raw-material
-requirements, then netted against inventory and timely purchase-order receipts.
+This document defines the implemented PostgreSQL relational model. The model
+supports deterministic, single-level BOM material planning: finished-product
+demand is converted into time-phased raw-material requirements, then netted
+against inventory and timely purchase-order receipts.
 
 ## Modeling Principles
 
@@ -116,9 +116,10 @@ products ──< bills_of_materials ──< bom_components >── materials
 
 - A product and revision-code combination must be unique.
 - End date, when present, cannot precede the start date.
-- The initial seeded dataset will contain one active BOM per active product.
+- The seeded dataset contains one active BOM per active product.
 - Preventing overlapping effective revisions requires validation beyond a
-  basic row-level check and will be covered by seed/load validation.
+  basic row-level check. The seeded data avoids overlaps, but the current
+  schema does not enforce that rule across multiple rows.
 
 ## 5. BOM Components
 
@@ -182,7 +183,7 @@ approximately 102.041 kg of material input, not simply 102 kg.
 - Price and minimum order quantity must be nonnegative.
 - Lead time cannot be negative.
 - Order multiple must be greater than zero.
-- The seed data will provide exactly one preferred approved source per active
+- The seed data provides exactly one preferred approved source per active
   material; the schema permits alternatives for later sourcing analysis.
 
 ## 7. Production Demand
@@ -281,11 +282,10 @@ before the requirement date can satisfy that requirement.
 
 ## Calculated Planning Output
 
-The first version will calculate a purchase-recommendation dataset with one row
-per material shortage and need date. It is not initially stored as a source
-table.
+The planning engine calculates a purchase-recommendation dataset with one row
+per material shortage and need date. It is not stored as a source table.
 
-Planned fields include:
+Output fields include:
 
 | Field | Purpose |
 |---|---|
@@ -312,9 +312,9 @@ This time-phased behavior is essential: a simple aggregate comparison of total
 demand against total supply could incorrectly treat a late purchase receipt as
 available for an earlier production requirement.
 
-## Indexing Plan
+## Indexing Strategy
 
-Indexes will support the principal join and planning paths:
+Indexes support the principal join and planning paths:
 
 - BOM lookup by product, status, and effective date;
 - component lookup by BOM;
