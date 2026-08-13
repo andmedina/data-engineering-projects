@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">BOM Material Planning Project Architecture</title>
+  <desc id="desc">Flow from PostgreSQL planning source tables through Python data generation, BOM explosion, time-phased netting, supplier constraints, and purchasing outputs.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; }
+      .title { font-size: 34px; font-weight: 700; fill: #10233f; }
+      .subtitle { font-size: 17px; font-weight: 400; fill: #5b6b82; }
+      .section { font-size: 15px; font-weight: 700; letter-spacing: 1.5px; fill: #64748b; }
+      .box-title { font-size: 18px; font-weight: 700; fill: #10233f; }
+      .body { font-size: 14px; font-weight: 400; fill: #40516a; }
+      .small { font-family: Menlo, Consolas, monospace; font-size: 13px; font-weight: 400; fill: #40516a; }
+      .arrow { stroke: #64748b; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1400" height="820" fill="#f8fafc"/>
+  <text x="700" y="55" text-anchor="middle" class="title">BOM Material Planning Architecture</text>
+  <text x="700" y="84" text-anchor="middle" class="subtitle">From production demand to time-phased, supplier-constrained purchase recommendations</text>
+
+  <text x="195" y="135" text-anchor="middle" class="section">POSTGRESQL SOURCE DATA</text>
+  <rect x="45" y="155" width="300" height="515" rx="18" fill="#eaf2fb" stroke="#80a9d5" stroke-width="2"/>
+
+  <g filter="url(#shadow)">
+    <rect x="75" y="190" width="240" height="78" rx="12" fill="#ffffff"/>
+    <text x="95" y="220" class="box-title">Demand</text>
+    <text x="95" y="246" class="small">production_demand</text>
+
+    <rect x="75" y="288" width="240" height="105" rx="12" fill="#ffffff"/>
+    <text x="95" y="318" class="box-title">Product Definition</text>
+    <text x="95" y="344" class="small">products · boms</text>
+    <text x="95" y="368" class="small">bom_lines</text>
+
+    <rect x="75" y="413" width="240" height="105" rx="12" fill="#ffffff"/>
+    <text x="95" y="443" class="box-title">Available Supply</text>
+    <text x="95" y="469" class="small">inventory_balances</text>
+    <text x="95" y="493" class="small">purchase_order_lines</text>
+
+    <rect x="75" y="538" width="240" height="105" rx="12" fill="#ffffff"/>
+    <text x="95" y="568" class="box-title">Purchasing Rules</text>
+    <text x="95" y="594" class="small">materials · suppliers</text>
+    <text x="95" y="618" class="small">supplier_materials</text>
+  </g>
+
+  <text x="700" y="135" text-anchor="middle" class="section">PYTHON PLANNING LAYER</text>
+  <rect x="405" y="155" width="590" height="515" rx="18" fill="#eef8f3" stroke="#75b99a" stroke-width="2"/>
+
+  <g filter="url(#shadow)">
+    <rect x="440" y="188" width="230" height="108" rx="12" fill="#ffffff"/>
+    <text x="460" y="219" class="box-title">1. Data Generation</text>
+    <text x="460" y="246" class="body">Create reproducible synthetic</text>
+    <text x="460" y="268" class="body">demand, inventory, and POs</text>
+
+    <rect x="730" y="188" width="230" height="108" rx="12" fill="#ffffff"/>
+    <text x="750" y="219" class="box-title">2. BOM Explosion</text>
+    <text x="750" y="246" class="body">Convert finished-product</text>
+    <text x="750" y="268" class="body">demand into material needs</text>
+
+    <rect x="440" y="358" width="230" height="130" rx="12" fill="#ffffff"/>
+    <text x="460" y="389" class="box-title">3. Time-Phased Netting</text>
+    <text x="460" y="416" class="body">Apply inventory, reservations,</text>
+    <text x="460" y="438" class="body">safety stock, and receipts</text>
+    <text x="460" y="462" class="small">need date → projected balance</text>
+
+    <rect x="730" y="358" width="230" height="130" rx="12" fill="#ffffff"/>
+    <text x="750" y="389" class="box-title">4. Recommendations</text>
+    <text x="750" y="416" class="body">Select supplier and apply</text>
+    <text x="750" y="438" class="body">lead time, MOQ, and multiples</text>
+    <text x="750" y="462" class="small">quantity · order date · cost</text>
+
+    <rect x="585" y="542" width="230" height="88" rx="12" fill="#dff3e8" stroke="#50a27b"/>
+    <text x="700" y="575" text-anchor="middle" class="box-title">Validation</text>
+    <text x="700" y="601" text-anchor="middle" class="body">33 automated business-rule tests</text>
+  </g>
+
+  <path d="M345 413 H405" class="arrow"/>
+  <path d="M670 242 H730" class="arrow"/>
+  <path d="M845 296 V330 H555 V358" class="arrow"/>
+  <path d="M670 423 H730" class="arrow"/>
+  <path d="M700 488 V542" class="arrow"/>
+
+  <text x="1205" y="135" text-anchor="middle" class="section">PLANNING OUTPUTS</text>
+  <rect x="1055" y="155" width="300" height="515" rx="18" fill="#fff5e7" stroke="#dfa65d" stroke-width="2"/>
+
+  <g filter="url(#shadow)">
+    <rect x="1085" y="190" width="240" height="125" rx="12" fill="#ffffff"/>
+    <text x="1105" y="220" class="box-title">Detailed CSV Exports</text>
+    <text x="1105" y="246" class="small">bom_explosion.csv</text>
+    <text x="1105" y="270" class="small">netted_requirements.csv</text>
+    <text x="1105" y="294" class="small">purchase_recommendations.csv</text>
+
+    <rect x="1085" y="355" width="240" height="110" rx="12" fill="#ffffff"/>
+    <text x="1105" y="385" class="box-title">Planning Report</text>
+    <text x="1105" y="412" class="body">Shortages, urgency, quantities,</text>
+    <text x="1105" y="434" class="body">suppliers, and estimated spend</text>
+
+    <rect x="1085" y="505" width="240" height="110" rx="12" fill="#ffffff"/>
+    <text x="1105" y="535" class="box-title">Portfolio Figures</text>
+    <text x="1105" y="562" class="body">Shortage exposure, purchase</text>
+    <text x="1105" y="584" class="body">spend, and order timeline</text>
+  </g>
+
+  <path d="M995 413 H1055" class="arrow"/>
+
+  <rect x="45" y="715" width="1310" height="65" rx="12" fill="#10233f"/>
+  <text x="75" y="743" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" font-weight="700" fill="#ffffff">DESIGN BOUNDARY</text>
+  <text x="75" y="766" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" fill="#d9e4f2">Deterministic single-level MRP simulation · synthetic portfolio data · advisory recommendations, not automatic ERP purchase orders</text>
+</svg>

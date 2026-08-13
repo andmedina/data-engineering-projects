@@ -56,6 +56,12 @@ The first version will answer:
 
 ## Planning Workflow
 
+![BOM material planning architecture](docs/images/project_architecture.svg)
+
+The architecture separates PostgreSQL source data from the Python planning
+logic and its reporting outputs. This makes each calculation stage independently
+testable while keeping the database as the planning system of record.
+
 ```text
 Production demand
         ↓
