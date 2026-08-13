@@ -1,8 +1,10 @@
 """Generate supplier purchase-order lines for material planning."""
 
 from datetime import date, timedelta
-from decimal import Decimal, ROUND_CEILING, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP
 import random
+
+from src.purchasing import apply_order_constraints
 
 
 THREE_DECIMALS = Decimal("0.001")
@@ -11,24 +13,6 @@ THREE_DECIMALS = Decimal("0.001")
 def round_quantity(value):
     """Round quantities to the database's three-decimal precision."""
     return Decimal(str(value)).quantize(THREE_DECIMALS, rounding=ROUND_HALF_UP)
-
-
-def apply_order_constraints(net_quantity, minimum_order_quantity, order_multiple):
-    """Apply MOQ and round a required quantity up to the supplier multiple."""
-    quantity = Decimal(str(net_quantity))
-    minimum = Decimal(str(minimum_order_quantity))
-    multiple = Decimal(str(order_multiple))
-
-    if quantity <= 0:
-        return Decimal("0.000")
-    if minimum < 0 or multiple <= 0:
-        raise ValueError("Supplier ordering constraints are invalid")
-
-    constrained = max(quantity, minimum)
-    multiple_count = (constrained / multiple).to_integral_value(
-        rounding=ROUND_CEILING
-    )
-    return round_quantity(multiple_count * multiple)
 
 
 def validate_purchase_order_record(record, valid_material_ids, valid_supplier_ids):

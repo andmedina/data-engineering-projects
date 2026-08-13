@@ -5,10 +5,8 @@ from decimal import Decimal
 
 import pytest
 
-from src.etl.generate_purchase_orders import (
-    apply_order_constraints,
-    generate_purchase_orders,
-)
+from src.etl.generate_purchase_orders import generate_purchase_orders
+from src.purchasing import apply_order_constraints
 
 
 MATERIAL_REQUIREMENTS = [
