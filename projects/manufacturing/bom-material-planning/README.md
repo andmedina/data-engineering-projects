@@ -102,6 +102,17 @@ netted_material_requirements.csv
 purchase_recommendations.csv
 ```
 
+[View the complete planning results and figures](docs/planning_results.md)
+
+See [`docs/planning_logic.md`](docs/planning_logic.md) for the formulas,
+time-phased netting sequence, purchasing constraints, and limitations.
+
+Recreate the planning figures:
+
+```bash
+python -m src.planning.create_results_figures
+```
+
 Generate or safely skip the three planning source datasets:
 
 ```bash
