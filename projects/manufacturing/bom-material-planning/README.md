@@ -1,6 +1,6 @@
 # BOM Material Planning
 
-> **Status:** Initial project design
+> **Status:** Core deterministic planning workflow implemented
 
 ## Overview
 
@@ -74,6 +74,44 @@ Calculate net material requirements
 Apply supplier MOQ and order-multiple constraints
         ↓
 Recommend purchase quantity and order date
+```
+
+## Current Results
+
+The reproducible planning run currently processes:
+
+- 48 finished-product demand lines across six aerospace fastener products;
+- 10 purchased materials and six approved or conditional suppliers;
+- 176 detailed demand-to-BOM-component requirements;
+- time-phased inventory and scheduled purchase receipts; and
+- supplier-constrained recommendations using lead time, MOQ, and order
+  multiples.
+
+Run the complete material plan from the project root:
+
+```bash
+python -m src.planning.report
+```
+
+The command prints a purchasing summary and recreates three detailed files in
+`outputs/planning/`:
+
+```text
+bom_explosion.csv
+netted_material_requirements.csv
+purchase_recommendations.csv
+```
+
+Generate or safely skip the three planning source datasets:
+
+```bash
+python -m src.generate_data
+```
+
+Run the automated business-rule tests:
+
+```bash
+python -m pytest -q
 ```
 
 ## Minimum Viable Scope
