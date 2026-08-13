@@ -59,6 +59,29 @@ and eaches.
 | CHEM-PASS | L | 89.372 | 0.000 | 0 | 0.000 | $0.00 | 0 |
 | CHEM-ZN-NI | L | 49.404 | 0.000 | 0 | 0.000 | $0.00 | 0 |
 
+### Material Code Key
+
+The codes are synthetic ERP-style identifiers. Their prefixes describe the
+material type, while the remaining segments identify the alloy, process, or
+package form.
+
+| Code | Meaning |
+|---|---|
+| `MAT-TI6AL4V-WR` | Ti-6Al-4V titanium wire (`MAT` = material, `WR` = wire) |
+| `MAT-MONEL-WR` | Monel 400 nickel-copper alloy wire |
+| `MAT-AL7050-WR` | 7050-T73 aluminum wire |
+| `MAT-SS286-WR` | A-286 stainless-steel wire (`SS` = stainless steel) |
+| `MAT-AL2117-WR` | 2117-T4 aluminum wire |
+| `MAT-4140-WR` | 4140 alloy-steel wire |
+| `PKG-TRAY-100` | Reusable packaging tray holding 100 fasteners |
+| `PKG-CARTON-1K` | Packaging carton holding 1,000 fasteners |
+| `CHEM-PASS` | Nitric passivation solution |
+| `CHEM-ZN-NI` | Zinc-nickel plating solution |
+
+Units of measure: `KG` = kilograms, `EA` = individual units, and `L` =
+liters. The alloy designations—such as Ti-6Al-4V, 7050, 2117, A-286, and
+4140—are industry material grades rather than quantities.
+
 The recommended quantity can exceed the cumulative net requirement because
 supplier MOQs and order multiples constrain purchase quantities. Excess supply
 from one recommendation is carried forward before another order is proposed.
