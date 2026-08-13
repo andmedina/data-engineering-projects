@@ -51,6 +51,25 @@ MATERIAL_REQUIREMENT_TOTALS_QUERY = text(
     """
 )
 
+PREFERRED_MATERIAL_SOURCES_QUERY = text(
+    """
+    SELECT
+        source.material_id,
+        source.supplier_id,
+        source.unit_price,
+        source.lead_time_days,
+        source.minimum_order_quantity,
+        source.order_multiple
+    FROM supplier_materials AS source
+    JOIN suppliers AS supplier
+        ON supplier.supplier_id = source.supplier_id
+    WHERE source.preferred_flag = TRUE
+      AND source.source_status = 'Approved'
+      AND supplier.supplier_status = 'Approved'
+    ORDER BY source.material_id
+    """
+)
+
 INSERT_PRODUCTION_DEMAND = text(
     """
     INSERT INTO production_demand (
@@ -95,6 +114,35 @@ INSERT_INVENTORY_BALANCES = text(
     """
 )
 
+INSERT_PURCHASE_ORDERS = text(
+    """
+    INSERT INTO purchase_orders (
+        purchase_order_number,
+        line_number,
+        supplier_id,
+        material_id,
+        order_date,
+        expected_receipt_date,
+        ordered_quantity,
+        received_quantity,
+        unit_price,
+        purchase_order_status
+    )
+    VALUES (
+        :purchase_order_number,
+        :line_number,
+        :supplier_id,
+        :material_id,
+        :order_date,
+        :expected_receipt_date,
+        :ordered_quantity,
+        :received_quantity,
+        :unit_price,
+        :purchase_order_status
+    )
+    """
+)
+
 
 def get_active_products(engine):
     """Return active product master records from PostgreSQL."""
@@ -108,6 +156,15 @@ def get_material_requirement_totals(engine):
         return [
             dict(row)
             for row in connection.execute(MATERIAL_REQUIREMENT_TOTALS_QUERY).mappings()
+        ]
+
+
+def get_preferred_material_sources(engine):
+    """Return each material's preferred approved purchasing rules."""
+    with engine.connect() as connection:
+        return [
+            dict(row)
+            for row in connection.execute(PREFERRED_MATERIAL_SOURCES_QUERY).mappings()
         ]
 
 
@@ -145,3 +202,15 @@ def load_inventory_balances(engine, inventory_rows):
             return 0
         connection.execute(INSERT_INVENTORY_BALANCES, inventory_rows)
     return len(inventory_rows)
+
+
+def load_purchase_orders(engine, purchase_order_rows):
+    """Insert purchase-order rows once and skip an already-populated table."""
+    if not purchase_order_rows:
+        raise ValueError("No purchase-order rows were provided")
+
+    with engine.begin() as connection:
+        if table_has_rows(connection, "purchase_orders"):
+            return 0
+        connection.execute(INSERT_PURCHASE_ORDERS, purchase_order_rows)
+    return len(purchase_order_rows)
