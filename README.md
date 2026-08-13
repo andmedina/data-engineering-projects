@@ -58,9 +58,9 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 
 | Project | Description |
 |----|----|
-| ⭐ [manufacturing_intelligence_platform](./projects/manufacturing/manufacturing-intelligence-platform/) | End-to-end manufacturing analytics platform integrating simulated ERP, MES, quality, inventory, and IoT sensor data into a PostgreSQL warehouse with ETL pipelines, KPI reporting, root cause analysis, and predictive machine learning for operational decision support. *Future enhancements include an AI-powered manufacturing assistant using large language models.* **🚧 Currently under development.** |
+| ⭐ [manufacturing_intelligence_platform](./projects/manufacturing/manufacturing-intelligence-platform/) | End-to-end aerospace manufacturing analytics platform integrating synthetic ERP, production, quality, maintenance, and IoT sensor data in PostgreSQL, with Python ETL pipelines, KPI reporting, Tableau visualization, root-cause analysis, and predictive-maintenance modeling. |
+| ⭐ [bom-material-planning](./projects/manufacturing/bom-material-planning/) | Material requirements planning workflow that converts production demand and single-level BOMs into time-phased, supplier-constrained purchase recommendations using inventory, scheduled receipts, safety stock, lead times, minimum order quantities, and order multiples. |
 | [cad_erp_pipeline](./projects/manufacturing/cad_erp_pipeline/) | Engineering metadata ETL pipeline simulating CAD-to-ERP workflows for manufacturing environments using Python, PostgreSQL, and structured BOM processing. |
-| `engineering_bom_analytics` *(Planned)* | Relational manufacturing dataset modeling assemblies, part revisions, suppliers, and inventory analytics for engineering reporting workflows. |
 
 ---
 
