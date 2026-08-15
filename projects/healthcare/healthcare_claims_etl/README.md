@@ -212,7 +212,7 @@ ORDER BY total_claims DESC;
 ## 1. Clone Repository
 
 ```bash
-git clone git@github.com:andmedina/data-engineering-projects.git
+git clone git@github.com:andmedina/data-projects.git
 ```
 
 ## 2. Create Conda Environment
