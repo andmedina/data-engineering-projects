@@ -1,7 +1,7 @@
-# Data Engineering Portfolio
+# Data Projects Portfolio
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Data_Engineering-Portfolio-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Data_Projects-Portfolio-blue?style=for-the-badge">
   <img src="https://img.shields.io/badge/Analytics-Projects-green?style=for-the-badge">
   <img src="https://img.shields.io/badge/Machine_Learning-Applications-orange?style=for-the-badge">
 </p>
@@ -21,7 +21,7 @@
   <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white">
 </p>
 
-This repository contains data engineering projects focused on ETL development, data pipelines, API ingestion, web scraping, database workflows, analytics engineering, and domain-specific data systems using Python and SQL.
+This repository contains data projects spanning ETL development, data pipelines, API ingestion, web scraping, database workflows, analytics engineering, machine learning, and domain-specific data systems using Python and SQL.
 
 Projects span healthcare, bioinformatics, and engineering/manufacturing data workflows.
 
