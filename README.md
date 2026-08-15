@@ -41,7 +41,7 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 | Project | Description |
 |----|----|
 | [healthcare_claims_etl](./projects/healthcare/healthcare_claims_etl/) | End-to-end healthcare claims ETL pipeline using Python, PostgreSQL, Airflow, and analytics-ready transformations |
-| `healthcare_streaming_pipeline` | Real-time patient vitals streaming pipeline using Kafka and event-driven processing |
+| `healthcare_streaming_pipeline` *(Planned)* | Real-time patient vitals streaming pipeline using Kafka and event-driven processing |
 
 ---
 
@@ -50,7 +50,7 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 | Project | Description |
 |----|----|
 | [gene_metadata_pipeline](./projects/gene_metadata_pipeline/) | Bioinformatics ETL pipeline extracting genomic metadata from the Ensembl API and loading structured results into SQLite |
-| `genomics_data_pipeline` | Pipeline for processing biological sequence data into analytics-ready relational datasets |
+| `genomics_data_pipeline` *(Planned)* | Pipeline for processing biological sequence data into analytics-ready relational datasets |
 
 ---
 
@@ -69,7 +69,7 @@ Projects combine multiple data engineering concepts into realistic, multi-stage 
 | Project | Description |
 |----|----|
 | [gdp_country_pipeline](./projects/gdp_country_pipeline/) | ETL pipeline extracting GDP data and storing transformed results in SQLite |
-| [shell_etl_psswd_to_sqlite](./projects/shell_etl_psswd_to_sqlite/) | Shell-based ETL pipeline using Unix data processing utilities |
+| [shell_etl_passwd_to_sqlite](./projects/shell_etl_passwd_to_sqlite/) | Shell-based ETL pipeline using Unix data processing utilities |
 | [top_movies_webscrape_etl](./projects/top_movies_webscrape_etl/) | Web scraping pipeline storing structured movie ranking data in SQLite |
 
 ---
